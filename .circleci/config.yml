@@ -93,8 +93,8 @@ jobs:
                   cd ~
                   wget https://cmake.org/files/v3.12/cmake-3.12.3-Linux-x86_64.sh
                   chmod +x cmake-3.12.3-Linux-x86_64.sh
-                  sudo ./cmake-3.12.3-Linux-x86_64.sh --skip-license
-                  sudo ln -s $(pwd)/bin/* /usr/local/bin
+                  ./cmake-3.12.3-Linux-x86_64.sh --skip-license
+                  ln -s $(pwd)/bin/* /usr/local/bin
                   rm cmake-3.12.3-Linux-x86_64.sh
             - run: # TODO: I think this won't be needed anymore
                 name: Install ARM Tools (ARM-only)
@@ -113,7 +113,7 @@ jobs:
                     echo >> $BASH_ENV export ARM_TOOLS_PATH=$(pwd)/gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf
 
                     # NOTE(mroberts): This is needed so that the WebRTC build finds the correct ld.gold.
-                    sudo apt-get install -y g++-arm-linux-gnueabihf
+                    apt-get install -y g++-arm-linux-gnueabihf
                   else
                     wget https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
                     tar xf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
@@ -121,7 +121,7 @@ jobs:
                     echo >> $BASH_ENV export ARM_TOOLS_PATH=$(pwd)/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
 
                     # NOTE(mroberts): This is needed so that the WebRTC build finds the correct ld.gold.
-                    sudo apt-get install -y g++-aarch64-linux-gnu
+                    apt-get install -y g++-aarch64-linux-gnu
                   fi
       ###
       # MAIN SETUP
@@ -211,7 +211,7 @@ jobs:
             fi
 
             if [[ "$(uname)" == Linux ]]; then
-              sudo apt-get install --reinstall python-pkg-resources
+              apt-get install --reinstall python-pkg-resources
             fi
 
             npm run wpt:init
@@ -239,7 +239,7 @@ jobs:
                     exit 0
                   fi
 
-                  sudo apt-get install -y \
+                  apt-get install -y \
                     gconf-service \
                     libasound2 \
                     libatk1.0-0 \
@@ -307,7 +307,7 @@ jobs:
 
             npm install --no-save electron@4.x
             if [[ "$(uname)" == Linux ]]; then
-              sudo apt-get install -y xvfb
+              apt-get install -y xvfb
               xvfb-run ./node_modules/.bin/electron test/electron --no-sandbox
             else
               npm run test:electron
