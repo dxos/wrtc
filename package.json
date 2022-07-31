@@ -16,8 +16,8 @@
     "type": "git",
     "url": "http://github.com/node-webrtc/node-webrtc.git"
   },
-  "main": "lib/index.js",
-  "browser": "lib/browser.js",
+  "main": "dist/nodejs/index.js",
+  "browser": "dist/browser/index.js",
   "binary": {
     "module_name": "wrtc",
     "module_path": "./build/{configuration}/",
