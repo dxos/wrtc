@@ -50,8 +50,8 @@ jobs:
             equal: [ "Debug", << parameters.release-type >> ]
           steps:
             - run:
+                name: Configure debug build
                 command: |
-                  echo 'export DEBUG="true"' >> $BASH_ENV
                   echo 'export CMAKE_BUILD_TYPE="Debug"' >> $BASH_ENV
       
       ###
@@ -64,13 +64,7 @@ jobs:
           steps:
             - run:
                 name: Install CMake
-                # NOTE(mroberts): Weird error that says
-                #
-                #   Error: HOMEBREW_LOGS was not exported!
-                #   Please don't worry, you likely hit a bug auto-updating from an old version.
-                #   Rerun your command, everything is up-to-date and fine now.
-                #
-                command: brew install cmake || brew install cmake
+                command: brew install cmake
         
       ###
       # LINUX SPECIFIC SETUP
@@ -82,47 +76,13 @@ jobs:
               - equal: [ *linux-x86_64, << parameters.os >> ]
               - equal: [ *linux-arm64, << parameters.os >> ]
           steps:
+            - run: apt update && install cmake build-essential -y
             - run:
                 name: Check Compiler Versions
                 command: |
                   gcc --version
                   g++ --version
-            - run:
-                name: Install CMake
-                command: |
-                  cd ~
-                  wget https://cmake.org/files/v3.12/cmake-3.12.3-Linux-x86_64.sh
-                  chmod +x cmake-3.12.3-Linux-x86_64.sh
-                  ./cmake-3.12.3-Linux-x86_64.sh --skip-license
-                  ln -s $(pwd)/bin/* /usr/local/bin
-                  rm cmake-3.12.3-Linux-x86_64.sh
-            - run: # TODO: I think this won't be needed anymore
-                name: Install ARM Tools (ARM-only)
-                command: |
-                  if [[ "$TARGET_ARCH" != arm* ]]; then
-                    echo "Skipping..."
-                    exit 0
-                  fi
 
-                  cd ~
-
-                  if [ "$TARGET_ARCH" == "arm" ]; then
-                    wget https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/arm-linux-gnueabihf/gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf.tar.xz
-                    tar xf gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf.tar.xz
-                    rm gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf.tar.xz
-                    echo >> $BASH_ENV export ARM_TOOLS_PATH=$(pwd)/gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf
-
-                    # NOTE(mroberts): This is needed so that the WebRTC build finds the correct ld.gold.
-                    apt-get install -y g++-arm-linux-gnueabihf
-                  else
-                    wget https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
-                    tar xf gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
-                    rm gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
-                    echo >> $BASH_ENV export ARM_TOOLS_PATH=$(pwd)/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
-
-                    # NOTE(mroberts): This is needed so that the WebRTC build finds the correct ld.gold.
-                    apt-get install -y g++-aarch64-linux-gnu
-                  fi
       ###
       # MAIN SETUP
       ###
@@ -139,21 +99,11 @@ jobs:
       - run:
           name: npm install
           command: |
-            # NOTE(mroberts): We have to reduce PARALLELISM during the build;
-            # otherwise, we run out of memory.
-            export PARALLELISM=2
-
-            # NOTE(mroberts): This fixes up some odd behavior when untar-ing as
-            # root.
-            export TAR_OPTIONS=--no-same-owner
-
-            # NOTE(mroberts): We aren't interested in downloading pre-built
-            # binaries on the CI server.
-            export SKIP_DOWNLOAD=true
-
-            # NOTE(mroberts): We need `--unsafe-perm` to run the install script
-            # as root.
-            npm install --unsafe-perm
+            export PARALLELISM=2 # Reduce PARALLELISM during the build; otherwise, we run out of memory.
+            export TAR_OPTIONS=--no-same-owner # This fixes up some odd behavior when untar-ing as root.
+            export SKIP_DOWNLOAD=true # Do not use prebuilt binaries
+            
+            npm install
 
             if [[ "$TARGET_ARCH" != arm* ]]; then
               npm run install-example
