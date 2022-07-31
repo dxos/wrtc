@@ -76,7 +76,7 @@ jobs:
               - equal: [ *linux-x86_64, << parameters.os >> ]
               - equal: [ *linux-arm64, << parameters.os >> ]
           steps:
-            - run: apt update && install cmake build-essential -y
+            - run: apt update && apt install cmake build-essential -y
             - run:
                 name: Check Compiler Versions
                 command: |
