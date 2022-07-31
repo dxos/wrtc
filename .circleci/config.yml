@@ -105,9 +105,10 @@ jobs:
             
             npm install
 
-            if [[ "$TARGET_ARCH" != arm* ]]; then
-              npm run install-example
-            fi
+            # TODO
+            # if [[ "$TARGET_ARCH" != arm* ]]; then
+            #   npm run install-example
+            # fi
       - run: npm run build
       - save_cache:
           key: asset-cache-v1-{{ arch }}-{{ checksum "CACHE_KEY" }}-{{ checksum "CMakeLists.txt" }}
@@ -121,7 +122,7 @@ jobs:
             cd /tmp/workspace/$PLATFORM-$TARGET_ARCH-$CMAKE_BUILD_TYPE
 
             cp ~/node-webrtc/build/$BUILD_TYPE/wrtc.node wrtc.node
-            cp -R ~/node-webrtc/example example || true
+            #cp -R ~/node-webrtc/example example || true # TODO
             cp -R ~/node-webrtc/node_modules node_modules
             cp -R ~/node-webrtc/build/external/libwebrtc/download/src/build/linux/debian_sid_arm-sysroot debian_sid_arm-sysroot || true
             cp -R ~/node-webrtc/build/external/libwebrtc/download/src/build/linux/debian_sid_arm64-sysroot debian_sid_arm64-sysroot || true
@@ -145,8 +146,9 @@ jobs:
               export CHECK_REFLEXIVE=true
               npm test
 
-              cd example
-              npm test
+              # TODO
+              # cd example
+              # npm test
             fi
         
       ###
