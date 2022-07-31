@@ -76,9 +76,12 @@
     "ws": "^5.2.0"
   },
   "scripts": {
+    "build": "tsc -b",
     "install": "node scripts/download-prebuilt-or-build-from-source.js",
     "install-example": "node scripts/install-example.js",
-    "lint": "eslint lib/*.js lib/**/*.js test/*.js test/**/*.js karma/*.js scripts/*.js",
+    "lint": "npm run lint:js && npm run lint:c++",
+    "lint:js": "eslint lib/*.js lib/**/*.js test/*.js test/**/*.js karma/*.js scripts/*.js",
+    "lint:c++": "cd build && make format",
     "publish-binary": "node scripts/publish.js",
     "test": "node --expose-gc test/all.js",
     "test:browsers": "cross-env BROWSER=chrome node scripts/karma.js && cross-env BROWSER=firefox node scripts/karma.js",
