@@ -38,8 +38,6 @@ jobs:
     executor: << parameters.os >>
     working_directory: ~/node-webrtc
     steps:
-      - node/install:
-          node-version: << parameters.node-version >>
 
       ###
       # CONFIGURE BUILD TYPE
@@ -87,6 +85,8 @@ jobs:
       # MAIN SETUP
       ###
 
+      - node/install:
+          node-version: << parameters.node-version >>
       - checkout
       - run:
           name: Before restore cache...
