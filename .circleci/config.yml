@@ -76,7 +76,7 @@ jobs:
               - equal: [ *linux-x86_64, << parameters.os >> ]
               - equal: [ *linux-arm64, << parameters.os >> ]
           steps:
-            - run: apt update && apt install cmake build-essential -y
+            - run: sudo apt update && sudo apt install cmake build-essential -y
             - run:
                 name: Check Compiler Versions
                 command: |
@@ -163,7 +163,7 @@ jobs:
             fi
 
             if [[ "$(uname)" == Linux ]]; then
-              apt-get install --reinstall python-pkg-resources
+              sudo apt install --reinstall python-pkg-resources
             fi
 
             npm run wpt:init
@@ -191,7 +191,7 @@ jobs:
                     exit 0
                   fi
 
-                  apt-get install -y \
+                  sudo apt install -y \
                     gconf-service \
                     libasound2 \
                     libatk1.0-0 \
@@ -259,7 +259,7 @@ jobs:
 
             npm install --no-save electron@4.x
             if [[ "$(uname)" == Linux ]]; then
-              apt-get install -y xvfb
+              sudo apt install -y xvfb
               xvfb-run ./node_modules/.bin/electron test/electron --no-sandbox
             else
               npm run test:electron
