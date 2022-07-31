@@ -39,7 +39,7 @@ jobs:
     working_directory: ~/node-webrtc
     steps:
       - node/install:
-          node-version: $NODE_VERSION
+          node-version: << parameters.node-version >>
 
       ###
       # CONFIGURE BUILD TYPE
@@ -319,7 +319,7 @@ jobs:
             else
               npm run test:electron
             fi
-      - run: # TODO: use conditionals and such
+      - run: # TODO: use conditionals and  such
           name: Publish Binary (arm64-, x86_64-only)
           command: |
             if [[ `git show -s --format=%B $CIRCLE_SHA1` == *'[publish binary]'* ]]; then
