@@ -1,5 +1,5 @@
 {
-  "name": "wrtc",
+  "name": "@astronautlabs/webrtc",
   "private": true,
   "description": "Standards-compliant WebRTC implementation for Node",
   "keywords": [
@@ -72,6 +72,7 @@
     "tape": "^4.9.1",
     "temp": "^0.9.0",
     "travis-multirunner": "^4.3.0",
+    "typescript": "^4.7.4",
     "ws": "^5.2.0"
   },
   "scripts": {
