@@ -1,3 +1,16 @@
+# vNext (0.5.0)
+
+- Move Javascript sources to Typescript
+- Use Visual Studio 2022 for Windows builds
+- Add cmake `project()` directive
+- Add VS code C++ configuration
+- Set up `webrtc.astrocdn.com` for future binary builds
+
+# Forked to @astronautlabs/webrtc
+
+The previous changelog entries correspond to releases of the `wrtc` package from which `@astronautlabs/webrtc` was 
+forked.
+
 # 0.4.6
 
 ## New Features

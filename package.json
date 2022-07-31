@@ -23,7 +23,7 @@
     "module_path": "./build/{configuration}/",
     "remote_path": "./{module_name}/v{version}/{configuration}/",
     "package_name": "{platform}-{arch}.tar.gz",
-    "host": "https://node-webrtc.s3.amazonaws.com"
+    "host": "https://webrtc.astrocdn.com"
   },
   "engines": {
     "node": "^8.11.2 || ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0"

@@ -9,8 +9,7 @@
 
 Node.js bindings for `libwebrtc`, which implements [WebRTC M87](https://chromium.googlesource.com/external/webrtc/+/branch-heads/4280). This project aims for spec-compliance and is tested using the W3C's [web-platform-tests](https://github.com/web-platform-tests/wpt) project. A number of [nonstandard APIs](docs/nonstandard-apis.md) for testing are also included.
 
-Install
--------
+# Install
 
 ```
 npm install @astronautlabs/webrtc
@@ -20,8 +19,7 @@ Installing from NPM downloads a prebuilt binary for your operating system × arc
 
 You can also [build from source](docs/build-from-source.md).
 
-Supported Platforms
--------------------
+# Supported Platforms
 
 The following platforms are confirmed to work with `@astronautlabs/webrtc` and have prebuilt binaries available. Since we target [N-API version 3](https://nodejs.org/api/n-api.html), there may be additional platforms supported that are not listed here. If your platform is not supported, you may still be able to [build from source](docs/build-from-source.md).
 
@@ -111,12 +109,15 @@ The following platforms are confirmed to work with `@astronautlabs/webrtc` and h
   </tbody>
 </table>
 
-Examples
---------
+# Examples
 
 See [node-webrtc/node-webrtc-examples](https://github.com/node-webrtc/node-webrtc-examples).
 
-Contributing
-------------
+# Development
 
-Contributions welcome! Please refer to the [wiki](https://github.com/node-webrtc/node-webrtc/wiki/Contributing).
+To set up a working copy for development:
+
+```shell
+SKIP_DOWNLOAD=true npm install --build-from-source    # Important to skip fetching a prebuilt version from CDN
+```
+
