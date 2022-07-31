@@ -12,7 +12,7 @@ executors:
       PLATFORM: linux
   linux-arm64: &linux-arm64
     machine:
-      image: ubuntu-2204:current
+      image: ubuntu-2004:current
     resource_class: arm.medium
     environment:
       TARGET_ARCH: arm64
