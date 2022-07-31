@@ -1,12 +1,6 @@
 version: 2
 
 aliases:
-  node-14-release: &node-14-release { environment: { NODE_VERSION: 14 } }
-  node-14-arm-release: &node-14-arm-release { environment: { NODE_VERSION: 14, TARGET_ARCH: arm } }
-  node-14-arm64-release: &node-14-arm64-release { environment: { NODE_VERSION: 14, TARGET_ARCH: arm64 } }
-  node-14-debug: &node-14-debug { environment: { NODE_VERSION: 14, DEBUG: true } }
-  node-14-arm-debug: &node-14-arm-debug { environment: { NODE_VERSION: 14, TARGET_ARCH: arm, DEBUG: true } }
-  node-14-arm64-debug: &node-14-arm64-debug { environment: { NODE_VERSION: 14, TARGET_ARCH: arm64, DEBUG: true } }
   lint-javascript: &lint-javascript
     run:
       name: Lint JavaScript
@@ -589,105 +583,113 @@ aliases:
 
 jobs:
   build-linux-x86_64-node-14-debug:
+    environment: { NODE_VERSION: 14, DEBUG: "true" }
     <<: *build-linux-x86_64
-    <<: *node-14-debug
 
   build-linux-x86_64-node-14-release:
+    environment: { NODE_VERSION: 14 }
     <<: *build-linux-x86_64
-    <<: *node-14-release
 
   build-linux-armv7l-node-14-debug:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm, DEBUG: "true" }
     <<: *build-linux-x86_64
-    <<: *node-14-arm-debug
 
   build-linux-armv7l-node-14-release:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm } 
     <<: *build-linux-x86_64
-    <<: *node-14-arm-release
 
   build-linux-arm64-node-14-debug:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm64, DEBUG: "true" }
     <<: *build-linux-x86_64
-    <<: *node-14-arm64-debug
 
   build-linux-arm64-node-14-release:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm64 }
     <<: *build-linux-x86_64
-    <<: *node-14-arm64-release
 
   build-darwin-x86_64-node-14-debug:
+    environment: { NODE_VERSION: 14, DEBUG: "true" }
     <<: *build-darwin-x86_64
-    <<: *node-14-debug
 
   build-darwin-x86_64-node-14-release:
+    environment: { NODE_VERSION: 14 }
     <<: *build-darwin-x86_64
-    <<: *node-14-release
 
   test-linux-x86_64-node-14-debug:
+    environment: { NODE_VERSION: 14, DEBUG: "true" }
     <<: *test-linux-x86_64
-    <<: *node-14-debug
 
   test-linux-x86_64-node-14-release:
+    environment: { NODE_VERSION: 14 }
     <<: *test-linux-x86_64
-    <<: *node-14-release
 
   test-linux-armv7l-node-14-debug:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm, DEBUG: "true" }
     <<: *test-linux-x86_64
-    <<: *node-14-arm-debug
 
   test-linux-armv7l-node-14-release:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm }
     <<: *test-linux-x86_64
-    <<: *node-14-arm-release
 
   test-linux-arm64-node-14-debug:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm64, DEBUG: "true" }
     <<: *test-linux-x86_64
-    <<: *node-14-arm64-debug
 
   test-linux-arm64-node-14-release:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm64 }
     <<: *test-linux-x86_64
-    <<: *node-14-arm64-release
 
   test-darwin-x86_64-node-14-debug:
+    environment: { NODE_VERSION: 14, DEBUG: "true" }
     <<: *test-darwin-x86_64
-    <<: *node-14-debug
 
   test-darwin-x86_64-node-14-release:
+    environment: { NODE_VERSION: 14 }
     <<: *test-darwin-x86_64
-    <<: *node-14-release
 
   publish-linux-x86_64-debug:
+    environment: { NODE_VERSION: 14, DEBUG: "true" }
     <<: *publish-linux-x86_64
-    <<: *node-14-debug
 
   publish-linux-x86_64-release:
+    environment: { NODE_VERSION: 14 }
     <<: *publish-linux-x86_64
-    <<: *node-14-release
 
   publish-linux-armv7l-debug:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm, DEBUG: "true" }
     <<: *publish-linux-x86_64
-    <<: *node-14-arm-debug
 
   publish-linux-armv7l-release:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm }
     <<: *publish-linux-x86_64
-    <<: *node-14-arm-release
 
   publish-linux-arm64-debug:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm64, DEBUG: "true" }
     <<: *publish-linux-x86_64
-    <<: *node-14-arm64-debug
 
   publish-linux-arm64-release:
+    environment: { NODE_VERSION: 14, TARGET_ARCH: arm64 }
     <<: *publish-linux-x86_64
-    <<: *node-14-arm64-release
 
   publish-darwin-x86_64-debug:
+    environment: { NODE_VERSION: 14, DEBUG: "true" }
     <<: *publish-darwin-x86_64
-    <<: *node-14-debug
 
   publish-darwin-x86_64-release:
+    environment: { NODE_VERSION: 14 }
     <<: *publish-darwin-x86_64
-    <<: *node-14-release
 
 workflows:
   version: 2
   build:
     jobs:
+      - build-linux-x86_64-node-14-debug
+      - build-linux-x86_64-node-14-release
+      - build-linux-armv7l-node-14-debug
+      - build-linux-armv7l-node-14-release
+      - build-linux-arm64-node-14-debug
+      - build-linux-arm64-node-14-release
+      - build-darwin-x86_64-node-14-debug
+      - build-darwin-x86_64-node-14-release
       - test-linux-x86_64-node-14-debug:    { requires: [build-linux-x86_64-node-14-debug] }
       - test-linux-x86_64-node-14-release:  { requires: [build-linux-x86_64-node-14-release] }
       - test-linux-armv7l-node-14-debug:    { requires: [build-linux-armv7l-node-14-debug] }
