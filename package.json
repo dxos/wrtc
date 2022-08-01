@@ -42,6 +42,7 @@
   ],
   "devDependencies": {
     "@fidm/x509": "^1.2.1",
+    "@types/node": "^18.6.3",
     "aws-sdk": "^2.2.10",
     "browserify-middleware": "^8.1.1",
     "cross-env": "^5.1.4",
@@ -90,5 +91,8 @@
     "wpt:reset": "rimraf ./test/web-platform-tests/tests && npm run wpt:init",
     "wpt:test": "mocha test/web-platform-tests/run-wpts.js --exit",
     "wpt:update": "git submodule update --recursive --remote --force && cd test/web-platform-tests/tests && python wpt.py manifest --path ../wpt-manifest.json"
-  }
+  },
+  "bundleDependencies": [
+    "@mapbox/node-pre-gyp"
+  ]
 }
