@@ -84,7 +84,7 @@ jobs:
                 name: Install platform dependencies
                 command: |
                   sudo apt update && sudo apt install cmake build-essential curl git python3 -y
-                  ln -s `which python3` /usr/local/bin/python 
+                  sudo ln -s `which python3` /usr/local/bin/python 
             - run:
                 name: Linux toolchain versions
                 command: |
