@@ -13,42 +13,66 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
     super(options ?? {});
     EventTarget.call(this);
   
-    Object.defineProperties(this, {
-      
-      onconnectionstatechange: {
-        value: null,
-        writable: true,
-        enumerable: true
-      },
-      ondatachannel: {
-        value: null,
-        writable: true,
-        enumerable: true
-      },
-      oniceconnectionstatechange: {
-        value: null,
-        writable: true,
-        enumerable: true
-      },
-      onicegatheringstatechange: {
-        value: null,
-        writable: true,
-        enumerable: true
-      },
-      onnegotiationneeded: {
-        value: null,
-        writable: true,
-        enumerable: true
-      },
-      onsignalingstatechange: {
-        value: null,
-        writable: true,
-        enumerable: true
-      }
+    
+    //
+    // Attach events to the native PeerConnection object
+    //
+    this.ontrack = <any>((receiver, streams, transceiver) => {
+      this.dispatchEvent(<any>{
+        type: 'track',
+        track: receiver.track,
+        receiver: receiver,
+        streams: streams,
+        transceiver: transceiver,
+        target: this
+      });
     });
-  }
 
-  private _pc: RTCPeerConnection;
+    this.onconnectionstatechange = () => {
+      this.dispatchEvent(<any>{ type: 'connectionstatechange', target: this });
+    };
+
+    this.onicecandidate = (ev) => {
+      var icecandidate = new RTCIceCandidate(ev.candidate);
+      this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', { candidate: icecandidate, target: this }));
+    };
+
+    this.onicecandidateerror = (event: any) => {
+      var pair = event.hostCandidate.split(':');
+      event.address = pair[0];
+      event.port = pair[1];
+      event.target = this;
+      var icecandidateerror = new RTCPeerConnectionIceErrorEvent('icecandidateerror', event);
+      this.dispatchEvent(icecandidateerror);
+    };
+
+    this.onsignalingstatechange = () => {
+      this.dispatchEvent(<any>{ type: 'signalingstatechange', target: this });
+    };
+
+    this.oniceconnectionstatechange = () => {
+      this.dispatchEvent(<any>{ type: 'iceconnectionstatechange', target: this });
+    };
+
+    this.onicegatheringstatechange = () => {
+      this.dispatchEvent(<any>{ type: 'icegatheringstatechange', target: this });
+
+      // if we have completed gathering candidates, trigger a null candidate event
+      if (this.iceGatheringState === 'complete' && this.connectionState !== 'closed') {
+        this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', { candidate: null, target: this }));
+      }
+    };
+
+    this.onnegotiationneeded = () => {
+      this.dispatchEvent(<any>{ type: 'negotiationneeded', target: this });
+    };
+
+    // [ToDo] onnegotiationneeded
+
+    this.ondatachannel = (ev) => {
+      this.dispatchEvent(new RTCDataChannelEvent('datachannel', <any>{ channel: ev.channel, target: this }));
+    };
+  }
 
   get canTrickleIceCandidates() {
       return this.canTrickleIceCandidates;
@@ -98,10 +122,6 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
       return this.signalingState;
   }
 
-  get readyState() {
-      return this.getReadyState();
-  }
-
   get sctp() {
       return this.sctp;
   }
@@ -114,138 +134,56 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
       return this.iceConnectionState;
   }
 
-  //
-  // Attach events to the native PeerConnection object
-  //
-  ontrack(receiver, streams, transceiver) {
-    this.dispatchEvent({
-      type: 'track',
-      track: receiver.track,
-      receiver: receiver,
-      streams: streams,
-      transceiver: transceiver,
-      target: this
-    });
-  };
-
-  onconnectionstatechange() {
-    this.dispatchEvent({ type: 'connectionstatechange', target: this });
-  };
-
-  onicecandidate(candidate) {
-    var icecandidate = new RTCIceCandidate(candidate);
-    this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', { candidate: icecandidate, target: this }));
-  };
-
-  onicecandidateerror(eventInitDict) {
-    var pair = eventInitDict.hostCandidate.split(':');
-    eventInitDict.address = pair[0];
-    eventInitDict.port = pair[1];
-    eventInitDict.target = this;
-    var icecandidateerror = new RTCPeerConnectionIceErrorEvent('icecandidateerror', eventInitDict);
-    this.dispatchEvent(icecandidateerror);
-  };
-
-  onsignalingstatechange() {
-    this.dispatchEvent({ type: 'signalingstatechange', target: this });
-  };
-
-  oniceconnectionstatechange() {
-    this.dispatchEvent({ type: 'iceconnectionstatechange', target: this });
-  };
-
-  onicegatheringstatechange() {
-    this.dispatchEvent({ type: 'icegatheringstatechange', target: this });
-
-    // if we have completed gathering candidates, trigger a null candidate event
-    if (this.iceGatheringState === 'complete' && this.connectionState !== 'closed') {
-      this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', { candidate: null, target: this }));
-    }
-  };
-
-  onnegotiationneeded() {
-    this.dispatchEvent({ type: 'negotiationneeded', target: this });
-  };
-
-  // [ToDo] onnegotiationneeded
-
-  ondatachannel(channel) {
-    this.dispatchEvent(new RTCDataChannelEvent('datachannel', { channel, target: this }));
-  };
-    
   addIceCandidate(candidate) {
-    var promise = this._pc.addIceCandidate(candidate);
+    var promise = this.addIceCandidate(candidate);
     if (arguments.length === 3) {
       promise.then(arguments[1], arguments[2]);
     }
     return promise;
   }
 
-  close() {
-    this._pc.close();
-  }
-
-  createDataChannel() {
-    return this._pc.createDataChannel.apply(this._pc, arguments);
-  }
-
-  createOffer() {
+  createOffer(options)
+  createOffer(successCallback, failureCallback)
+  createOffer(successCallback, failureCallback, options) 
+  createOffer(...args)
+  {
     var options = arguments.length === 3
       ? arguments[2]
       : arguments[0];
-    var promise = this._pc.createOffer(options || {});
+    var promise = super.createOffer(options || {});
     if (arguments.length >= 2) {
       promise.then(arguments[0], arguments[1]);
     }
     return promise;
   }
 
-  createAnswer() {
+  createAnswer()
+  createAnswer(options)
+  createAnswer(successCallback, failureCallback)
+  createAnswer(successCallback, failureCallback, options)
+  createAnswer(...argfs) {
     var options = arguments.length === 3
       ? arguments[2]
       : arguments[0];
-    var promise = this._pc.createAnswer(options || {});
+    var promise = super.createAnswer(options || {});
     if (arguments.length >= 2) {
       promise.then(arguments[0], arguments[1]);
     }
     return promise;
-  }
-
-  getConfiguration() {
-    return this._pc.getConfiguration();
-  }
-
-  getReceivers() {
-    return this._pc.getReceivers();
-  }
-
-  getSenders() {
-    return this._pc.getSenders();
-  }
-
-  getTransceivers() {
-    return this._pc.getTransceivers();
   }
 
   legacyGetStats: () => Promise<void>;
+
   getStats() {
     if (typeof arguments[0] === 'function') {
-      this._pc.legacyGetStats().then(arguments[0], arguments[1]);
+      this.legacyGetStats().then(arguments[0], arguments[1]);
       return;
     }
-    return this._pc.getStats();
-  }
-
-  removeTrack(sender) {
-    this._pc.removeTrack(sender);
-  }
-
-  setConfiguration(configuration) {
-    return this._pc.setConfiguration(configuration);
+    return super.getStats();
   }
 
   setLocalDescription(description) {
-    var promise = this._pc.setLocalDescription(description);
+    var promise = super.setLocalDescription(description);
     if (arguments.length === 3) {
       promise.then(arguments[1], arguments[2]);
     }
@@ -253,15 +191,11 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
   }
 
   setRemoteDescription(description) {
-    var promise = this._pc.setRemoteDescription(description);
+    var promise = super.setRemoteDescription(description);
     if (arguments.length === 3) {
       promise.then(arguments[1], arguments[2]);
     }
     return promise;
-  }
-
-  restartIce() {
-    return this._pc.restartIce();
   }
 }
 
