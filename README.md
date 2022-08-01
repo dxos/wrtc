@@ -127,6 +127,7 @@ SKIP_DOWNLOAD=true npm install --build-from-source    # Important to skip fetchi
 
 - Install VS 2019 (not just the VS 2019 build tools from a newer VS release like 2022)
 - Install Windows 10 SDK v10.0.19041.0
-    * Use the Windows SDK installer, which includes the required Debugging Tools for Windows
+    * Use the Windows SDK installer, make sure to include the required Debugging Tools for Windows
     * (!!) Do not use the Visual Studio installer, if you have previously installed this SDK via Visual Studio Installer, 
-      you must first remove it and install using the Windows SDK installer instead.
+      you must first remove it and install using the Windows SDK installer instead. If you use this, the build will fail
+      on requirement of Windows SDK 10.0.19041.0
