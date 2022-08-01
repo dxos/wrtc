@@ -77,7 +77,7 @@ jobs:
             - run:
                 command: |
                   if ! which sudo &>/dev/null; then
-                    apt install sudo
+                    apt update && apt install sudo
                   fi
             - run: sudo apt update && sudo apt install cmake build-essential curl -y
             - run:
