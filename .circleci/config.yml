@@ -61,8 +61,8 @@ jobs:
             equal: [ *macos, << parameters.os >> ]
           steps:
             - run:
-                name: Install CMake via Homebrew
-                command: brew install cmake
+                name: Install CMake and Python2 via Homebrew
+                command: brew install cmake kamilturek/python2/python@2
         
       ###
       # LINUX SPECIFIC SETUP
