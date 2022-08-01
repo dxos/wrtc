@@ -80,7 +80,7 @@ jobs:
                   if ! which sudo &>/dev/null; then
                     apt update && apt install sudo
                   fi
-            - run: sudo apt update && sudo apt install cmake build-essential curl -y
+            - run: sudo apt update && sudo apt install cmake build-essential curl git -y
             - run:
                 name: Linux Toolchain Versions
                 command: |
