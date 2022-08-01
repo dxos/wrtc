@@ -12,7 +12,7 @@ if (process.env.DEBUG) {
 
 if (process.platform === 'win32') {
   args.push('-g');
-  args.push('"Visual Studio 17 2022"');
+  args.push('"Visual Studio 16 2019"'); // Important: libwebrtc determines the version that will work.
 }
 
 function main() {
