@@ -61,7 +61,7 @@ jobs:
             equal: [ *macos, << parameters.os >> ]
           steps:
             - run:
-                name: Install CMake
+                name: Install CMake via Homebrew
                 command: brew install cmake
         
       ###
@@ -81,13 +81,10 @@ jobs:
                     apt update && apt install sudo
                   fi
             - run: 
-                name: Install platform dependencies
+                name: Install platform dependencies via Apt
                 command: |
-                  sudo apt update && sudo apt install cmake build-essential curl git python2 -y
+                  sudo apt update && sudo apt install cmake build-essential curl git python2 libglib2.0-dev -y
                   sudo ln -s `which python2` /usr/local/bin/python
-            - run:
-                name: Linux toolchain versions
-                command: |
                   set -x
                   gcc --version
                   g++ --version
