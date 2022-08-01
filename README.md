@@ -115,9 +115,18 @@ See [node-webrtc/node-webrtc-examples](https://github.com/node-webrtc/node-webrt
 
 # Development
 
+Make sure to check the platform-specific sections below for important information.
+
 To set up a working copy for development:
 
 ```shell
 SKIP_DOWNLOAD=true npm install --build-from-source    # Important to skip fetching a prebuilt version from CDN
 ```
 
+## Windows
+
+- Install VS 2019 (not just the VS 2019 build tools from a newer VS release like 2022)
+- Install Windows 10 SDK v10.0.19041.0
+    * Use the Windows SDK installer, which includes the required Debugging Tools for Windows
+    * (!!) Do not use the Visual Studio installer, if you have previously installed this SDK via Visual Studio Installer, 
+      you must first remove it and install using the Windows SDK installer instead.
