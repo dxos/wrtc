@@ -123,7 +123,6 @@ jobs:
           key: asset-cache-v1-{{ arch }}-{{ checksum "CACHE_KEY" }}-{{ checksum "CMakeLists.txt" }}
           paths:
             - build/external
-      - run: npm run lint
       - run:
           name: Before save workspace...
           command: |
