@@ -1,9 +1,9 @@
 import * as native from '../../binding';
-import { EventTarget } from './eventtarget';
+import { EventEmitter } from './eventemitter';
 
-var RTCPeerConnectionIceEvent = require('./rtcpeerconnectioniceevent');
-var RTCPeerConnectionIceErrorEvent = require('./rtcpeerconnectioniceerrorevent');
-var RTCSessionDescription = require('./sessiondescription');
+import { RTCPeerConnectionIceEvent } from './rtcpeerconnectioniceevent';
+import { RTCPeerConnectionIceErrorEvent } from './rtcpeerconnectioniceerrorevent';
+import { RTCSessionDescription } from './sessiondescription';
 
 export declare class NRTCPeerConnection extends globalThis.RTCPeerConnection {
 }
@@ -11,9 +11,7 @@ export declare class NRTCPeerConnection extends globalThis.RTCPeerConnection {
 export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCPeerConnection) {
   constructor(options?: RTCConfiguration) {
     super(options ?? {});
-    EventTarget.call(this);
   
-    
     //
     // Attach events to the native PeerConnection object
     //
@@ -34,7 +32,7 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
 
     this.onicecandidate = (ev) => {
       var icecandidate = new RTCIceCandidate(ev.candidate);
-      this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', { candidate: icecandidate, target: this }));
+      this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', <any>{ candidate: icecandidate, target: this }));
     };
 
     this.onicecandidateerror = (event: any) => {
@@ -59,7 +57,7 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
 
       // if we have completed gathering candidates, trigger a null candidate event
       if (this.iceGatheringState === 'complete' && this.connectionState !== 'closed') {
-        this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', { candidate: null, target: this }));
+        this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', <any>{ candidate: null, target: this }));
       }
     };
 
@@ -74,6 +72,11 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
     };
   }
 
+  private emitter = new EventEmitter();
+  addEventListener(type, listener) { return this.emitter.addEventListener(type, listener); };
+  dispatchEvent(event) { return this.emitter.dispatchEvent(event); }
+  removeEventListener(type, listener) { return this.removeEventListener(type, listener); }
+  
   get canTrickleIceCandidates() {
       return this.canTrickleIceCandidates;
   }
@@ -83,59 +86,43 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
   }
 
   get currentLocalDescription() {
-      return this.currentLocalDescription
-        ? new RTCSessionDescription(this.currentLocalDescription)
+      return super.currentLocalDescription
+        ? new RTCSessionDescription(super.currentLocalDescription)
         : null;
   }
 
   get localDescription() {
-      return this.localDescription
-        ? new RTCSessionDescription(this.localDescription)
+      return super.localDescription
+        ? new RTCSessionDescription(super.localDescription)
         : null;
   }
 
   get pendingLocalDescription() {
-      return this.pendingLocalDescription
-        ? new RTCSessionDescription(this.pendingLocalDescription)
+      return super.pendingLocalDescription
+        ? new RTCSessionDescription(super.pendingLocalDescription)
         : null;
   }
 
   get currentRemoteDescription() {
-      return this.currentRemoteDescription
-        ? new RTCSessionDescription(this.currentRemoteDescription)
+      return super.currentRemoteDescription
+        ? new RTCSessionDescription(super.currentRemoteDescription)
         : null;
   }
   
   get remoteDescription() {
-      return this.remoteDescription
-        ? new RTCSessionDescription(this.remoteDescription)
+      return super.remoteDescription
+        ? new RTCSessionDescription(super.remoteDescription)
         : null;
   }
 
   get pendingRemoteDescription() {
-      return this.pendingRemoteDescription
-        ? new RTCSessionDescription(this.pendingRemoteDescription)
+      return super.pendingRemoteDescription
+        ? new RTCSessionDescription(super.pendingRemoteDescription)
         : null;
   }
 
-  get signalingState() {
-      return this.signalingState;
-  }
-
-  get sctp() {
-      return this.sctp;
-  }
-
-  get iceGatheringState() {
-      return this.iceGatheringState;
-  }
-
-  get iceConnectionState() {
-      return this.iceConnectionState;
-  }
-
   addIceCandidate(candidate) {
-    var promise = this.addIceCandidate(candidate);
+    var promise = super.addIceCandidate(candidate);
     if (arguments.length === 3) {
       promise.then(arguments[1], arguments[2]);
     }
@@ -201,6 +188,3 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
 
 // NOTE(mroberts): This is a bit of a hack.
 //RTCPeerConnection.prototype.ontrack = null;
-
-
-module.exports = RTCPeerConnection;

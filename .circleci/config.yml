@@ -129,7 +129,7 @@ jobs:
             mkdir -p /tmp/workspace/$PLATFORM-$TARGET_ARCH-$CMAKE_BUILD_TYPE
             cd /tmp/workspace/$PLATFORM-$TARGET_ARCH-$CMAKE_BUILD_TYPE
 
-            cp ~/node-webrtc/build/$BUILD_TYPE/wrtc.node wrtc.node
+            cp ~/node-webrtc/build/$CMAKE_BUILD_TYPE/wrtc.node wrtc.node
             #cp -R ~/node-webrtc/example example || true # TODO
             cp -R ~/node-webrtc/node_modules node_modules
             cp -R ~/node-webrtc/build/external/libwebrtc/download/src/build/linux/debian_sid_arm-sysroot debian_sid_arm-sysroot || true
