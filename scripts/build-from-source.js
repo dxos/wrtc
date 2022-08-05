@@ -5,8 +5,9 @@
 const { spawnSync } = require('child_process');
 
 const args = ['configure'];
+const DEBUG = !!process.env.DEBUG;
 
-if (process.env.DEBUG) {
+if (DEBUG) {
   args.push('--debug');
 }
 
@@ -25,8 +26,13 @@ function main() {
     throw new Error('ncmake configure failed for wrtc');
   }
 
+  let buildArgs = ['build'];
+
+  if (DEBUG)
+    buildArgs.push('--debug');
+  
   console.log('Running ncmake build');
-  status = spawnSync('ncmake', ['build'], {
+  status = spawnSync('ncmake', buildArgs, {
     shell: true,
     stdio: 'inherit'
   }).status;
