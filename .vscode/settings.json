@@ -107,6 +107,25 @@
         "span": "cpp",
         "stack": "cpp",
         "*.ipp": "cpp",
-        "*.idl": "cpp"
+        "*.idl": "cpp",
+        "concepts": "cpp",
+        "execution": "cpp",
+        "format": "cpp",
+        "stop_token": "cpp",
+        "xfacet": "cpp",
+        "xhash": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocinfo": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "xmemory": "cpp",
+        "xstddef": "cpp",
+        "xtr1common": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
     }
 }

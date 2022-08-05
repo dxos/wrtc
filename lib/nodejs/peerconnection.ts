@@ -4,85 +4,185 @@ import { EventEmitter } from './eventemitter';
 import { RTCPeerConnectionIceEvent } from './rtcpeerconnectioniceevent';
 import { RTCPeerConnectionIceErrorEvent } from './rtcpeerconnectioniceerrorevent';
 import { RTCSessionDescription } from './sessiondescription';
+import { RTCIceCandidate } from './icecandidate';
+import { RTCDataChannelEvent } from './datachannelevent';
 
 export declare class NRTCPeerConnection extends globalThis.RTCPeerConnection {
+}
+
+/**
+ * At no point should the managed event handler implementations throw an unexpected exception.
+ * This ensures that behavior.
+ * @param name 
+ * @param handler 
+ * @returns 
+ */
+function ManagedHandler() {
+  return (target, propertyKey, property: PropertyDescriptor) => {
+    let handler: Function = target[propertyKey];
+
+    property.value = function (event) {
+      try {
+        return handler.apply(this, [ event ]);
+      } catch (e) {
+        console.error(`(@/webrtc) INTERNAL: Caught error in managed handler ${handler.name}: ${e.message}`);
+        console.error(e);
+      }
+    }
+
+    return property;
+  };
 }
 
 export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCPeerConnection) {
   constructor(options?: RTCConfiguration) {
     super(options ?? {});
+  }
+
+  private emitter = new EventEmitter(this);
+  addEventListener(type, listener) { return this.emitter.addEventListener(type, listener); };
+  dispatchEvent(event) { return this.emitter.dispatchEvent(event); }
+  removeEventListener(type, listener) { return this.removeEventListener(type, listener); }
   
-    //
-    // Attach events to the native PeerConnection object
-    //
-    this.ontrack = <any>((receiver, streams, transceiver) => {
-      this.dispatchEvent(<any>{
-        type: 'track',
-        track: receiver.track,
-        receiver: receiver,
-        streams: streams,
-        transceiver: transceiver,
-        target: this
-      });
+  /**
+   * @internal
+   * @param receiver 
+   * @param streams 
+   * @param transceiver 
+   */
+  @ManagedHandler()
+  _ontrack(receiver, streams, transceiver) {
+    this.dispatchEvent(<any>{
+      type: 'track',
+      track: receiver.track,
+      receiver: receiver,
+      streams: streams,
+      transceiver: transceiver,
+      target: this
     });
+  }
 
-    this.onconnectionstatechange = () => {
-      this.dispatchEvent(<any>{ type: 'connectionstatechange', target: this });
-    };
+  /**
+   * @internal
+   * @param receiver 
+   * @param streams 
+   * @param transceiver 
+   */
+  @ManagedHandler()
+  _onicecandidate(candidate) {
+    try {
+      this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', <any>{ 
+        candidate: new RTCIceCandidate(candidate), 
+        target: this 
+      }));
+    } catch (e) {
+      console.error(`ERROR DURING onicecandidate:`);
+      console.error(e);
+      throw e;
+    }
+  }
 
-    this.onicecandidate = (ev) => {
-      var icecandidate = new RTCIceCandidate(ev.candidate);
-      this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', <any>{ candidate: icecandidate, target: this }));
-    };
+  /**
+   * @internal
+   * @param receiver 
+   * @param streams 
+   * @param transceiver 
+   */
+  @ManagedHandler()
+  _onconnectionstatechange() {
+    this.dispatchEvent(<any>{ type: 'connectionstatechange', target: this });
+  }
 
-    this.onicecandidateerror = (event: any) => {
-      var pair = event.hostCandidate.split(':');
-      event.address = pair[0];
-      event.port = pair[1];
-      event.target = this;
-      var icecandidateerror = new RTCPeerConnectionIceErrorEvent('icecandidateerror', event);
-      this.dispatchEvent(icecandidateerror);
-    };
+  /**
+   * @internal
+   * @param receiver 
+   * @param streams 
+   * @param transceiver 
+   */
+  @ManagedHandler()
+  _onicecandidateerror(event: any) {
+    var pair = event.hostCandidate.split(':');
+    event.address = pair[0];
+    event.port = pair[1];
+    event.target = this;
+    var icecandidateerror = new RTCPeerConnectionIceErrorEvent('icecandidateerror', event);
+    this.dispatchEvent(icecandidateerror);
+  }
 
-    this.onsignalingstatechange = () => {
-      this.dispatchEvent(<any>{ type: 'signalingstatechange', target: this });
-    };
+  /**
+   * @internal
+   * @param receiver 
+   * @param streams 
+   * @param transceiver 
+   */
+  @ManagedHandler()
+  _onsignalingstatechange() {
+    this.dispatchEvent(<any>{ type: 'signalingstatechange', target: this });
+  }
 
-    this.oniceconnectionstatechange = () => {
-      this.dispatchEvent(<any>{ type: 'iceconnectionstatechange', target: this });
-    };
+  /**
+   * @internal
+   * @param receiver 
+   * @param streams 
+   * @param transceiver 
+   */
+   @ManagedHandler()
+   _oniceconnectionstatechange() {
+    this.dispatchEvent(<any>{ type: 'iceconnectionstatechange', target: this });
+  }
 
-    this.onicegatheringstatechange = () => {
+  /**
+   * @internal
+   * @param receiver 
+   * @param streams 
+   * @param transceiver 
+   */
+  @ManagedHandler()
+  _onicegatheringstatechange() {
+    try {
       this.dispatchEvent(<any>{ type: 'icegatheringstatechange', target: this });
 
       // if we have completed gathering candidates, trigger a null candidate event
       if (this.iceGatheringState === 'complete' && this.connectionState !== 'closed') {
         this.dispatchEvent(new RTCPeerConnectionIceEvent('icecandidate', <any>{ candidate: null, target: this }));
       }
-    };
+    } catch (e) {
+      console.error(`ERROR DURING onicegatheringstatechange:`);
+      console.error(e);
 
-    this.onnegotiationneeded = () => {
-      this.dispatchEvent(<any>{ type: 'negotiationneeded', target: this });
-    };
-
-    // [ToDo] onnegotiationneeded
-
-    this.ondatachannel = (ev) => {
-      this.dispatchEvent(new RTCDataChannelEvent('datachannel', <any>{ channel: ev.channel, target: this }));
-    };
+      throw e;
+    }
   }
 
-  private emitter = new EventEmitter();
-  addEventListener(type, listener) { return this.emitter.addEventListener(type, listener); };
-  dispatchEvent(event) { return this.emitter.dispatchEvent(event); }
-  removeEventListener(type, listener) { return this.removeEventListener(type, listener); }
-  
-  get canTrickleIceCandidates() {
-      return this.canTrickleIceCandidates;
+  /**
+   * @internal
+   * @param receiver 
+   * @param streams 
+   * @param transceiver 
+   */
+  @ManagedHandler()
+  _onnegotiationneeded() {
+    this.dispatchEvent(<any>{ type: 'negotiationneeded', target: this });
   }
 
-  get connectionState() {
-      return this.connectionState;
+  // [ToDo] onnegotiationneeded
+
+  /**
+   * @internal
+   * @param receiver 
+   * @param streams 
+   * @param transceiver 
+   */
+  @ManagedHandler()
+  _ondatachannel(channel) {
+    try {
+      this.dispatchEvent(new RTCDataChannelEvent('datachannel', <any>{ channel, target: this }));
+    } catch (e) {
+      console.error(`CAUGHT ERROR DURING ondatachannel:`);
+      console.error(e);
+
+      throw e;
+    }
   }
 
   get currentLocalDescription() {

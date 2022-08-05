@@ -18,7 +18,11 @@ const FIELDS = [
 ];
 
 export class RTCIceCandidate implements NRTCIceCandidate {
-    constructor(candidateInitDict: Record<string,any>) {
+    /**
+     * @internal
+     */
+    constructor(candidateInitDict: Record<string,any>)
+    {
         FIELDS.forEach(property => {
             if (candidateInitDict && property in candidateInitDict) {
                 this[property] = candidateInitDict[property];
@@ -44,6 +48,11 @@ export class RTCIceCandidate implements NRTCIceCandidate {
     usernameFragment: string | null;
     
     toJSON(): RTCIceCandidateInit {
-        throw new Error("Method not implemented.");
+        return {
+            candidate: this.candidate,
+            sdpMLineIndex: this.sdpMLineIndex,
+            sdpMid: this.sdpMid,
+            usernameFragment: this.usernameFragment
+        };
     }
 }

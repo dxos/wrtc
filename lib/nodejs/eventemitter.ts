@@ -4,7 +4,9 @@
  */
 
 export class EventEmitter {
-    constructor() {
+    constructor(private subject?: any) {
+        if (!this.subject)
+            this.subject = this;
     }
 
     private _listeners: Record<string, any> = {};
@@ -25,7 +27,7 @@ export class EventEmitter {
         process.nextTick(() => {
             listeners = new Set(listeners[event.type] || []);
 
-            const dummyListener = this['on' + event.type];
+            const dummyListener = this.subject['on' + event.type];
             if (typeof dummyListener === 'function') {
                 listeners.add(dummyListener);
             }
@@ -34,7 +36,7 @@ export class EventEmitter {
                 if (typeof listener === 'object' && typeof listener.handleEvent === 'function') {
                     listener.handleEvent(event);
                 } else {
-                    listener.call(this, event);
+                    listener.call(this.subject, event);
                 }
             });
         });

@@ -125,6 +125,10 @@ SKIP_DOWNLOAD=true npm install --build-from-source    # Important to skip fetchi
 
 ## Windows
 
+- Make sure long path support is enabled
+- Set `HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnable` to `1`
+- `git config --global core.longpaths true`
+- `git config core.longpaths true`
 - Install VS 2019 (not just the VS 2019 build tools from a newer VS release like 2022)
 - Install Windows 10 SDK v10.0.19041.0
     * Use the Windows SDK installer, make sure to include the required Debugging Tools for Windows

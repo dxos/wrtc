@@ -110,7 +110,7 @@ RTCPeerConnection::~RTCPeerConnection() {
 
 void RTCPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState state) {
   Dispatch(CreateCallback<RTCPeerConnection>([this, state]() {
-    MakeCallback("onsignalingstatechange", {});
+    MakeCallback("_onsignalingstatechange", {});
     if (state == webrtc::PeerConnectionInterface::kClosed) {
       Stop();
     }
@@ -119,14 +119,14 @@ void RTCPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::Signa
 
 void RTCPeerConnection::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState) {
   Dispatch(CreateCallback<RTCPeerConnection>([this]() {
-    MakeCallback("oniceconnectionstatechange", {});
-    MakeCallback("onconnectionstatechange", {});
+    MakeCallback("_oniceconnectionstatechange", {});
+    MakeCallback("_onconnectionstatechange", {});
   }));
 }
 
 void RTCPeerConnection::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState) {
   Dispatch(CreateCallback<RTCPeerConnection>([this]() {
-    MakeCallback("onicegatheringstatechange", {});
+    MakeCallback("_onicegatheringstatechange", {});
   }));
 }
 
@@ -156,7 +156,7 @@ void RTCPeerConnection::OnIceCandidate(const webrtc::IceCandidateInterface* ice_
       auto env = Env();
       auto maybeCandidate = From<Napi::Value>(std::make_pair(env, candidate.get()));
       if (maybeCandidate.IsValid()) {
-        MakeCallback("onicecandidate", { maybeCandidate.UnsafeFromValid() });
+        MakeCallback("_onicecandidate", { maybeCandidate.UnsafeFromValid() });
       }
     }
   }));
@@ -186,7 +186,7 @@ void RTCPeerConnection::OnIceCandidateError(const std::string& host_candidate, c
             * From<Napi::Value>(std::make_pair(env, error_code))
             * From<Napi::Value>(std::make_pair(env, error_text)));
     if (maybeEvent.IsValid()) {
-      MakeCallback("onicecandidateerror", { maybeEvent.UnsafeFromValid() });
+      MakeCallback("_onicecandidateerror", { maybeEvent.UnsafeFromValid() });
     }
   }));
 }
@@ -195,7 +195,7 @@ void RTCPeerConnection::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInte
   auto observer = new DataChannelObserver(_factory, channel);
   Dispatch(CreateCallback<RTCPeerConnection>([this, observer]() {
     auto channel = RTCDataChannel::wrap()->GetOrCreate(observer, observer->channel());
-    MakeCallback("ondatachannel", { channel->Value() });
+    MakeCallback("_ondatachannel", { channel->Value() });
   }));
 }
 
@@ -214,7 +214,7 @@ void RTCPeerConnection::OnAddTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterfa
       mediaStreams.push_back(mediaStream);
     }
     CONVERT_OR_THROW_AND_RETURN_VOID_NAPI(Env(), mediaStreams, streamArray, Napi::Value)
-    MakeCallback("ontrack", {
+    MakeCallback("_ontrack", {
       RTCRtpReceiver::wrap()->GetOrCreate(_factory, receiver)->Value(),
       streamArray,
       Env().Null()
@@ -232,7 +232,7 @@ void RTCPeerConnection::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterfa
       mediaStreams.push_back(mediaStream);
     }
     CONVERT_OR_THROW_AND_RETURN_VOID_NAPI(Env(), mediaStreams, streamArray, Napi::Value)
-    MakeCallback("ontrack", {
+    MakeCallback("_ontrack", {
       RTCRtpReceiver::wrap()->GetOrCreate(_factory, receiver)->Value(),
       streamArray,
       RTCRtpTransceiver::wrap()->GetOrCreate(_factory, transceiver)->Value()
@@ -245,7 +245,7 @@ void RTCPeerConnection::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInt
 
 void RTCPeerConnection::OnRenegotiationNeeded() {
   Dispatch(CreateCallback<RTCPeerConnection>([this]() {
-    MakeCallback("onnegotiationneeded", {});
+    MakeCallback("_onnegotiationneeded", {});
   }));
 }
 

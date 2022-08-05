@@ -1,9 +1,28 @@
 import { describe, suite } from "razmin";
 
 console.log(`****************`);
-console.log(`STARTING TESTS`);
+console.log(`@/webrtc Test Suite`);
+console.log(`PID: ${process.pid}`);
+console.log(`Starting in 10 seconds...`);
 
-suite().include(['**/r*.test.js']).run();
+setTimeout(() => {
+    suite()
+        .include([
+            //'**/*.test.js',
+            '**/r*.test.js',
+            //'**/connect.test.js'
+        ])
+        .withOptions({
+            execution: {
+                order: 'default',
+                timeout: 10*1000,
+                verbose: true
+            }
+        })
+        .run()
+    ;
+}, 10*1000);
+
 
 // TODO(mroberts): async_hooks were introduced in Node 9. We use them to test
 // that destructors fire at the appropriate time (and hence, no memory leaks

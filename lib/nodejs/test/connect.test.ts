@@ -6,7 +6,7 @@ import { RTCIceCandidate, RTCPeerConnection } from '..';
 import { captureCandidates } from './helpers/capture-candidates';
 
 describe('RTCPeerConnection', it => {
-  let candidatesPromises;
+  let candidatesPromises: Promise<globalThis.RTCIceCandidate[]>[];
   let peers: RTCPeerConnection[] = [];
   let candidates: RTCIceCandidate[][] = [];
   let dcs: RTCDataChannel[] = [];
@@ -23,11 +23,13 @@ describe('RTCPeerConnection', it => {
       peers[1].ondatachannel = function(evt) {
         dcs[1] = evt.channel;
         resolve(dcs[1]);
+        console.log(`PEER1 CHANNEL:`)
+        console.dir(dcs[1]);
       };
     });
   
     candidatesPromises = peers.map(function(pc, i) {
-      var candidatesPromise = captureCandidates(pc);
+      var candidatesPromise = captureCandidates(pc, `Peer ${i}`, c => peers[i ? 0 : 1].addIceCandidate(c));
       return candidatesPromise.then(function(_candidates) {
         candidates[i] = _candidates;
         return _candidates;
@@ -44,8 +46,11 @@ describe('RTCPeerConnection', it => {
   });
   
   it('create a datachannel on peer:0', () => {
-    expect(dcs[0] = peers[0].createDataChannel('test')).to.be.true;
+    expect(dcs[0] = peers[0].createDataChannel('test')).to.exist;
     expect(dcs[0].label).to.equal('test');
+
+    console.log(`************** PEER0 DATA:`);
+    console.dir(dcs[0].constructor.name);
   });
   
   it('createOffer for peer:0', async () => {
@@ -74,7 +79,10 @@ describe('RTCPeerConnection', it => {
     if (!candidates[0].length)
       return;
   
-    await Promise.all(candidates.map(candidate => peers[1].addIceCandidate(new RTCIceCandidate(candidate))));
+    await Promise.all(candidates[0].map(candidate => {
+      console.log(candidate);
+      return peers[1].addIceCandidate(candidate);
+    }));
   });
   
   it('createAnswer for peer:1', async () => {
@@ -102,7 +110,7 @@ describe('RTCPeerConnection', it => {
     if (!candidates[1].length)
       return;
   
-    await Promise.all(candidates[1].map(c => peers[0].addIceCandidate(new RTCIceCandidate(c))));
+    await Promise.all(candidates[1].map(c => peers[0].addIceCandidate(c)));
   });
   
   it('peer:1 triggers data channel event', async () => {
@@ -159,11 +167,11 @@ describe('RTCPeerConnection', it => {
     return messageEventPromise.then((messageEvent) => {
       var data = messageEvent.data;
       if (typeof message === 'string') {
-        expect(data.length).to.equal(message.length);
+        expect(data.length).to.equal(message.length, "String length must match.");
         expect(data).to.equal(message);
       } else {
         data = new Uint8Array(data);
-        expect(data.length).to.equal(message.length);
+        expect(data.length).to.equal(message.length, "Uint8Array length must match");
         expect([].slice.call(data)).to.eql([].slice.call(message));
       }
     });
@@ -206,7 +214,7 @@ describe('RTCPeerConnection', it => {
         return char.charCodeAt(0);
       }));
     } else if (options.type === 'buffer') {
-      message = new Buffer(message);
+      message = Buffer.from(message);
     }
     return testSendingAMessageNTimes(sender, receiver, message, options.times);
   }
@@ -258,7 +266,7 @@ describe('RTCPeerConnection', it => {
         return;
       }
       // eslint-disable-next-line no-console
-      console.log(reports);
+      //console.log(reports);
     }
   
     peers.forEach(peer =>getStats(peer, done));
@@ -278,7 +286,7 @@ describe('RTCPeerConnection', it => {
         throw new Error(error);
       }
       // eslint-disable-next-line no-console
-      console.log(reports);
+      //console.log(reports);
     }
   
     peers.forEach(peer => getStats(peer, done));

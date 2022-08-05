@@ -27,3 +27,14 @@ export * from "./getusermedia";
 
 import { MediaDevices } from './mediadevices';
 export const mediaDevices = new MediaDevices();
+
+import { RTCDataChannel } from './datachannel';
+
+// NOTE(mroberts): Here's a hack to support jsdom's Blob implementation.
+RTCDataChannel.prototype.send = function send(data) {
+  const implSymbol = Object.getOwnPropertySymbols(data).find(symbol => symbol.toString() === 'Symbol(impl)');
+  if (data[implSymbol] && data[implSymbol]._buffer) {
+    data = data[implSymbol]._buffer;
+  }
+  this._send(data);
+};
