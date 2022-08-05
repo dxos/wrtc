@@ -1,5 +1,6 @@
 import { inherits } from 'util';
 import * as native from '../../binding';
+import { EventTarget } from './eventtarget';
 
 export class RTCDataChannel extends (native.RTCDataChannel as typeof globalThis.RTCDataChannel) {
     override send(data: string): void;
