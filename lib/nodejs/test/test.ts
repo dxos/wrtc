@@ -8,8 +8,8 @@ console.log(`Starting in 10 seconds...`);
 setTimeout(() => {
     suite()
         .include([
-            //'**/*.test.js',
-            '**/r*.test.js',
+            '**/*.test.js',
+            //'**/r*.test.js',
             //'**/connect.test.js'
         ])
         .withOptions({
