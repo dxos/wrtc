@@ -3,12 +3,20 @@ import { describe, suite } from "razmin";
 console.log(`****************`);
 console.log(`@/webrtc Test Suite`);
 console.log(`PID: ${process.pid}`);
-console.log(`Starting in 10 seconds...`);
+
+let waitTime = 0;
+
+if (process.argv.includes('--native-debug')) {
+    console.log(`Attach native debugger now.`);
+    console.log(`Starting in 20 seconds...`);
+    waitTime = 20*1000;
+}
 
 setTimeout(() => {
     suite()
         .include([
             '**/*.test.js',
+            //'**/latency.test.js',
             //'**/r*.test.js',
             //'**/connect.test.js'
         ])
@@ -16,12 +24,12 @@ setTimeout(() => {
             execution: {
                 order: 'default',
                 timeout: 10*1000,
-                verbose: true
+                verbose: process.argv.includes('--verbose')
             }
         })
         .run()
     ;
-}, 10*1000);
+}, waitTime);
 
 
 // TODO(mroberts): async_hooks were introduced in Node 9. We use them to test
