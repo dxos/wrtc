@@ -97,22 +97,14 @@ async function measureTimeFromRTCVideoSourceToRemoteRTCVideoSink(width, height, 
 function testTimeFromRTCVideoSourceToLocalVideoSink(width, height) {
   it(`Average Time from RTCVideoSource to Local RTCVideoSink (${width} x ${height})`, async () => {
     const averageTime = await measureTimeFromRTCVideoSourceToLocalRTCVideoSink(width, height);
-    console.log(
-      `#\n`
-      + `#  ${averageTime} ms\n`
-      + `#\n`
-    );
+    console.log(`    (***) Latency: video|source->sink|local[${width}x${height}]: ${averageTime} ms`);
   });
 }
 
 function testTimeFromRTCVideoSourceToRemoteVideoSink(width, height) {
   it(`Average Time from RTCVideoSource to Remote RTCVideoSink (${width} x ${height})`, async () => {
     const averageTime = await measureTimeFromRTCVideoSourceToRemoteRTCVideoSink(width, height);
-    console.log(
-      `#\n`
-      + `#  ${averageTime} ms\n`
-      + `#\n`
-    );
+    console.log(`    (***) Latency: video|source->sink|remote[${width}x${height}]: ${averageTime} ms`);
   });
 }
 
@@ -168,11 +160,7 @@ async function measureTimeThroughUnorderedUnreliableRTCDataChannel() {
 describe('Latency', it => {
   it(': Average Time through Unordered, Unreliable RTCDataChannel', async () => {
     const averageTime = await measureTimeThroughUnorderedUnreliableRTCDataChannel();
-    console.log(
-      `#\n`
-      + `#  ${averageTime} ms\n`
-      + `#\n`
-    );
+    console.log(`    (***) Latency: data-channel: ${averageTime} ms`);
   });
   describe(': RTCVideoSource to', () => {
     describe('LocalVideoSink', it => {
