@@ -42,7 +42,7 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
   private emitter = new EventEmitter(this);
   addEventListener(type, listener) { return this.emitter.addEventListener(type, listener); };
   dispatchEvent(event) { return this.emitter.dispatchEvent(event); }
-  removeEventListener(type, listener) { return this.removeEventListener(type, listener); }
+  removeEventListener(type, listener) { return this.emitter.removeEventListener(type, listener); }
   
   /**
    * @internal
