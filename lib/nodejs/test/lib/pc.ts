@@ -10,9 +10,15 @@ export function createRTCPeerConnections(configuration1 = {}, configuration2 = {
     const pc2 = new RTCPeerConnection(configuration2);
     if (options.handleIce) {
       [[pc1, pc2], [pc2, pc1]].forEach(([pcA, pcB]) => {
-        pcA.addEventListener('icecandidate', ({ candidate }) => {
+        pcA.addEventListener('icecandidate', async ({ candidate }) => {
           if (candidate) {
-            pcB.addIceCandidate(candidate);
+            try {
+              await pcB.addIceCandidate(candidate);
+            } catch (e) {
+              console.error(`[test-lib] Caught error while conveying ICE candidate between peers: ${e.message}`);
+              debugger;
+              throw e;
+            }
           }
         });
       });
