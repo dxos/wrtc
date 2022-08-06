@@ -10,23 +10,23 @@ var log = process.env.LOG ? console.log : function() {};
 describe('multiconnect', it => {
   it('connect once', () => {
     log('###########################\n');
-    connect(err => { throw err; });
+    connect(err => { if (err) throw err; });
   });
   it('connect loop', () => {
     log('###########################\n');
-    connectLoop(10, err => { throw err; });
+    connectLoop(10, err => { if (err) throw err; });
   });
   it('connect concurrent', () => {
     var n = 10;
     log('###########################\n');
     for (let i = 0; i < n; i += 1)
-      connect(err => { throw err; });
+      connect(err => { if (err) throw err; });
   });
   it('connect loop concurrent', () => {
     var n = 10;
     log('###########################\n');
     for (var i = 0; i < n; i += 1)
-      connectLoop(10, err => { throw err; });
+      connectLoop(10, err => { if (err) throw err; });
   });
 });
 

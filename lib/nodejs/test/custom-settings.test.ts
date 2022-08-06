@@ -7,7 +7,8 @@ import * as wrtc from '..';
 describe('CustomSettings', it => {
   it('custom ports connect once', () => {
     connectClientServer({ min: 9000, max: 9010 }, err => {
-      throw new Error('connectClientServer callback');
+      if (err)
+        throw new Error(`connectClientServer callback: ${err}`);
     });
   });
   
@@ -17,7 +18,8 @@ describe('CustomSettings', it => {
     const portRange = { min: 9000, max: 9010 };
   
     function callback(err) {
-      throw new Error('connectClientServer callback');
+      if (err)
+        throw new Error('connectClientServer callback');
     }
   
     for (let i = 0; i < n; i++) {
