@@ -119,19 +119,47 @@ Make sure to check the platform-specific sections below for important informatio
 
 To set up a working copy for development:
 
+## Linux/Mac
+
+Pre-steps
+- Install `python3`, C/C++ toolchain (ie `build-essential`), `cmake`
+
 ```shell
-SKIP_DOWNLOAD=true npm install --build-from-source    # Important to skip fetching a prebuilt version from CDN
+export SKIP_DOWNLOAD=true   # Important to skip fetching a prebuilt version from CDN
+export DEBUG=1
+export PARALLELISM=24       # Set to number of logical cores on your machine
+
+# Initial install will build libwebrtc
+# Get a coffee.
+
+npm install
 ```
 
 ## Windows
 
+Pre-steps:
+- Install python3
 - Make sure long path support is enabled
-- Set `HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnable` to `1`
-- `git config --global core.longpaths true`
-- `git config core.longpaths true`
+    - Set `HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnable` to `1`
+    - `git config --global core.longpaths true`
+    - `git config core.longpaths true`
 - Install VS 2019 (not just the VS 2019 build tools from a newer VS release like 2022)
+    - `libwebrtc` is the limiting factor here
 - Install Windows 10 SDK v10.0.19041.0
     * Use the Windows SDK installer, make sure to include the required Debugging Tools for Windows
     * (!!) Do not use the Visual Studio installer, if you have previously installed this SDK via Visual Studio Installer, 
       you must first remove it and install using the Windows SDK installer instead. If you use this, the build will fail
       on requirement of Windows SDK 10.0.19041.0
+
+Initial build
+
+```powershell
+$env:SKIP_DOWNLOAD = 'true'   # Important to skip fetching a prebuilt version from CDN
+$env:DEBUG = '1'
+$env:PARALLELISM = '24'       # set to number of logical cores
+
+# Initial install will build libwebrtc
+# Get a coffee.
+
+npm install
+```
