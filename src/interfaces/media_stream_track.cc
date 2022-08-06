@@ -63,9 +63,15 @@ void MediaStreamTrack::Stop() {
 }
 
 void MediaStreamTrack::OnChanged() {
-  if (_track->state() == webrtc::MediaStreamTrackInterface::TrackState::kEnded) {
-    Stop();
-  }
+  // Important to dispatch onto our own thread, because we may be in the process of shutting down
+  // via PeerConnection.Close(). If that is the case, stopping the track will attempt to unregister
+  // the observer on the underlying MediaStreamTrack which will cause a deadlock between signalling
+  // and worker threads.
+  Dispatch(CreateCallback<MediaStreamTrack>([this] () {
+    if (_track->state() == webrtc::MediaStreamTrackInterface::TrackState::kEnded) {
+      Stop();
+    }
+  }));
 }
 
 void MediaStreamTrack::OnPeerConnectionClosed() {
