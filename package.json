@@ -98,8 +98,5 @@
     "wpt:reset": "rimraf ./test/web-platform-tests/tests && npm run wpt:init",
     "wpt:test": "mocha test/web-platform-tests/run-wpts.js --exit",
     "wpt:update": "git submodule update --recursive --remote --force && cd test/web-platform-tests/tests && python wpt.py manifest --path ../wpt-manifest.json"
-  },
-  "bundleDependencies": [
-    "@mapbox/node-pre-gyp"
-  ]
+  }
 }
