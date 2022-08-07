@@ -163,3 +163,17 @@ $env:PARALLELISM = '24'       # set to number of logical cores
 
 npm install
 ```
+
+# Required Reading
+
+References
+- [RTP: A Transport Protocol for Real-Time Applications](https://datatracker.ietf.org/doc/html/rfc3550) (IETF RFC 3550)
+- [Unified Plan](https://datatracker.ietf.org/doc/html/draft-roach-mmusic-unified-plan-00#section-2)
+- [Plan B](https://datatracker.ietf.org/doc/html/draft-uberti-rtcweb-plan-00)
+- [RTCRtpTransceiver](https://developer.mozilla.org/en-US/docs/Web/API/RTCRtpTransceiver) (MDN)
+- [Negotiating Media Multiplexing Using the Session Description Protocol](https://datatracker.ietf.org/doc/html/draft-ietf-mmusic-sdp-bundle-negotiation-54#section-18) ("BUNDLE" IETF I-D)
+
+Editorial
+- [The evolution of WebRTC 1.0.](https://blog.mozilla.org/webrtc/the-evolution-of-webrtc/) (Mozilla)
+- [Exploring RTCRtpTransceiver.](https://blog.mozilla.org/webrtc/rtcrtptransceiver-explored/) (Mozilla)
+- [Webrtc with transceivers](https://niccoloterreri.com/webrtc-with-transceivers) (nterreri)
