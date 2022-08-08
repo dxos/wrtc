@@ -28,7 +28,7 @@ class RTCDtlsTransport
  public:
   explicit RTCDtlsTransport(const Napi::CallbackInfo&);
 
-  ~RTCDtlsTransport() override;
+  void Finalize(Napi::Env env) override;
 
   static void Init(Napi::Env, Napi::Object);
 

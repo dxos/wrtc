@@ -273,7 +273,10 @@ MediaStream* MediaStream::Create(
     Napi::External<rtc::scoped_refptr<webrtc::MediaStreamInterface>>::New(env, &stream)
   });
 
-  return MediaStream::Unwrap(object);
+  // Add a reference owned by the RTCPeerConnection
+  auto unwrapped = Unwrap(object);
+  unwrapped->Ref();
+  return unwrapped;
 }
 
 void MediaStream::Init(Napi::Env env, Napi::Object exports) {

@@ -35,6 +35,18 @@ RTCVideoSource::RTCVideoSource(const Napi::CallbackInfo& info)
   New(info);
 }
 
+void RTCVideoSource::Finalize(Napi::Env env)
+{
+    // These are the tracks created via CreateTrack().
+    // We will unref them so that they are collectable, 
+    // but note that if they were added to one or more PeerConnections
+    // via addTrack(), that they will still be referenced by those 
+    // PeerConnections and thus will continue to remain uncollectable.
+
+    for (auto track : _tracks)
+        track->Unref();
+}
+
 Napi::Value RTCVideoSource::New(const Napi::CallbackInfo& info) {
   auto env = info.Env();
 
@@ -59,7 +71,13 @@ Napi::Value RTCVideoSource::CreateTrack(const Napi::CallbackInfo&) {
   // TODO(mroberts): Again, we have some implicit factory we are threading around. How to handle?
   auto factory = PeerConnectionFactory::GetOrCreateDefault();
   auto track = factory->factory()->CreateVideoTrack(rtc::CreateRandomUuid(), _source);
-  return MediaStreamTrack::wrap()->GetOrCreate(factory, track)->Value();
+
+  // Here the default reference will be owned by the RTCVideoSource. 
+  // See RTCPeerConnection::AddTrack() for corresponding referencing logic in that case.
+
+  auto wrappedTrack = MediaStreamTrack::wrap()->GetOrCreate(factory, track);
+  _tracks.insert(wrappedTrack);
+  return wrappedTrack->Value();
 }
 
 Napi::Value RTCVideoSource::OnFrame(const Napi::CallbackInfo& info) {

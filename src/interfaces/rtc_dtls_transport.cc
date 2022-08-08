@@ -80,11 +80,12 @@ RTCDtlsTransport::RTCDtlsTransport(const Napi::CallbackInfo& info)
   });
 }
 
-RTCDtlsTransport::~RTCDtlsTransport() {
+void RTCDtlsTransport::Finalize(Napi::Env env) {
   Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
   _factory->Unref();
   _factory = nullptr;
-}  // NOLINT
+  wrap()->Release(this);
+}
 
 void RTCDtlsTransport::Stop() {
   _transport->UnregisterObserver();
@@ -180,7 +181,9 @@ RTCDtlsTransport* RTCDtlsTransport::Create(
     Napi::External<rtc::scoped_refptr<webrtc::DtlsTransportInterface>>::New(env, &transport)
   });
 
-  return RTCDtlsTransport::Unwrap(object);
+  auto unwrapped = Unwrap(object);
+  unwrapped->Ref();
+  return unwrapped;
 }
 
 void RTCDtlsTransport::Init(Napi::Env env, Napi::Object exports) {

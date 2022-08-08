@@ -91,12 +91,12 @@ RTCDataChannel::RTCDataChannel(const Napi::CallbackInfo& info)
   _cached_buffered_amount = 0;
 }
 
-RTCDataChannel::~RTCDataChannel() {
+void RTCDataChannel::Finalize(Napi::Env env) {
   _factory->Unref();
   _factory = nullptr;
 
   wrap()->Release(this);
-}  // NOLINT
+}
 
 void RTCDataChannel::CleanupInternals() {
   if (_jingleDataChannel == nullptr) {
@@ -347,7 +347,9 @@ RTCDataChannel* RTCDataChannel::Create(
     Napi::External<node_webrtc::DataChannelObserver>::New(env, observer)
   });
 
-  return Unwrap(object);
+  auto unwrapped = Unwrap(object);
+  unwrapped->Ref();
+  return unwrapped;
 }
 
 void RTCDataChannel::Init(Napi::Env env, Napi::Object exports) {

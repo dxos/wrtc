@@ -26,7 +26,7 @@ class RTCSctpTransport
  public:
   explicit RTCSctpTransport(const Napi::CallbackInfo&);
 
-  ~RTCSctpTransport() override;
+  void Finalize(Napi::Env env) override;
 
   static void Init(Napi::Env, Napi::Object);
 

@@ -28,7 +28,7 @@ class MediaStreamTrack
  public:
   explicit MediaStreamTrack(const Napi::CallbackInfo&);
 
-  ~MediaStreamTrack() override;
+  void Finalize(Napi::Env env) override;
 
   static void Init(Napi::Env, Napi::Object);
 
@@ -48,6 +48,10 @@ class MediaStreamTrack
   > * wrap();
 
   static Napi::FunctionReference& constructor();
+
+  inline std::string getId() {
+      return _track->id();
+  }
 
  protected:
   void Stop() override;

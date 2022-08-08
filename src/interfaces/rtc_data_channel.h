@@ -30,7 +30,7 @@ class RTCDataChannel
  public:
   explicit RTCDataChannel(const Napi::CallbackInfo&);
 
-  ~RTCDataChannel() override;
+  void Finalize(Napi::Env env) override;
 
   static Napi::FunctionReference& constructor();
 

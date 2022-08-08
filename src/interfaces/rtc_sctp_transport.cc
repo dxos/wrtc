@@ -45,12 +45,12 @@ RTCSctpTransport::RTCSctpTransport(const Napi::CallbackInfo& info)
   }
 }
 
-RTCSctpTransport::~RTCSctpTransport() {
+void RTCSctpTransport::Finalize(Napi::Env env) {
   Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
   _factory->Unref();
   _factory = nullptr;
   wrap()->Release(this);
-}  // NOLINT
+}
 
 void RTCSctpTransport::Stop() {
   _transport->UnregisterObserver();
@@ -81,7 +81,11 @@ RTCSctpTransport* RTCSctpTransport::Create(
     Napi::External<rtc::scoped_refptr<webrtc::SctpTransportInterface>>::New(env, &transport)
   });
 
-  return RTCSctpTransport::Unwrap(object);
+  auto unwrapped = Unwrap(object);
+
+  // The reference is owned by RTCPeerConnection
+  unwrapped->Ref();
+  return unwrapped;
 }
 
 void RTCSctpTransport::OnStateChange(const webrtc::SctpTransportInformation info) {

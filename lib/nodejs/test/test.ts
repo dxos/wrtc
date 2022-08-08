@@ -16,6 +16,7 @@ setTimeout(() => {
     suite()
         .include([
             '**/*.test.js',
+            //'**/rollback.test.js',
             //'**/latency.test.js',
             //'**/r*.test.js',
             //'**/connect.test.js'

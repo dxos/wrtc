@@ -61,7 +61,7 @@ describe('RTCVideoSource', it => {
     }
   });
   
-  it('getStats()', async () => {
+  it.skip('getStats()', async () => {
     const source = new RTCVideoSource();
     const track = source.createTrack();
   

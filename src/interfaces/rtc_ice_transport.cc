@@ -63,12 +63,12 @@ void RTCIceTransport::TakeSnapshot() {
   }
 }
 
-RTCIceTransport::~RTCIceTransport() {
+void RTCIceTransport::Finalize(Napi::Env env) {
   Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
   _factory->Unref();
   _factory = nullptr;
   wrap()->Release(this);
-}  // NOLINT
+}
 
 void RTCIceTransport::OnRTCDtlsTransportStopped() {
   std::lock_guard<std::mutex> lock(_mutex);
@@ -109,7 +109,9 @@ RTCIceTransport* RTCIceTransport::Create(
     Napi::External<rtc::scoped_refptr<webrtc::IceTransportInterface>>::New(env, &transport)
   });
 
-  return RTCIceTransport::Unwrap(object);
+  auto unwrapped = Unwrap(object);
+  unwrapped->Ref();
+  return unwrapped;
 }
 
 void RTCIceTransport::OnStateChanged(cricket::IceTransportInternal*) {

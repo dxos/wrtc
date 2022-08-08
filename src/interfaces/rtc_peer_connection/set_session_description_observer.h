@@ -17,19 +17,23 @@
 namespace webrtc { class RTCError; }
 
 namespace node_webrtc {
+	class SetSessionDescriptionObserver: 
+		public PromiseCreator<RTCPeerConnection>, 
+		public webrtc::SetSessionDescriptionObserver {
+	public:
+		SetSessionDescriptionObserver(
+			RTCPeerConnection* peer_connection,
+			Napi::Promise::Deferred deferred)
+			: PromiseCreator<RTCPeerConnection>(peer_connection, deferred) {
+			pc = peer_connection;
+		}
 
-class SetSessionDescriptionObserver
-  : public PromiseCreator<RTCPeerConnection>
-  , public webrtc::SetSessionDescriptionObserver {
- public:
-  SetSessionDescriptionObserver(
-      RTCPeerConnection* peer_connection,
-      Napi::Promise::Deferred deferred)
-    : PromiseCreator<RTCPeerConnection>(peer_connection, deferred) {}
+		void OnSuccess() override;
 
-  void OnSuccess() override;
+		void OnFailure(webrtc::RTCError) override;
 
-  void OnFailure(webrtc::RTCError) override;
-};
+	private:
+		RTCPeerConnection* pc;
+	};
 
 }  // namespace node_webrtc

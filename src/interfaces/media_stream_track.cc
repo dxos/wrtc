@@ -45,7 +45,7 @@ MediaStreamTrack::MediaStreamTrack(const Napi::CallbackInfo& info)
   _enabled = false;
 }
 
-MediaStreamTrack::~MediaStreamTrack() {
+void MediaStreamTrack::Finalize(Napi::Env env) {
   _track = nullptr;
 
   Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
@@ -53,7 +53,7 @@ MediaStreamTrack::~MediaStreamTrack() {
   _factory = nullptr;
 
   wrap()->Release(this);
-}  // NOLINT
+}
 
 void MediaStreamTrack::Stop() {
   _track->UnregisterObserver(this);
@@ -161,12 +161,14 @@ MediaStreamTrack* MediaStreamTrack::Create(
   auto env = constructor().Env();
   Napi::HandleScope scope(env);
 
-  auto mediaStreamTrack = constructor().New({
+  auto mediaStreamTrack = Unwrap(constructor().New({
     factory->Value(),
     Napi::External<rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>>::New(env, &track)
-  });
+  }));
 
-  return Unwrap(mediaStreamTrack);
+  // Add a reference owned by the RTCPeerConnection
+  mediaStreamTrack->Ref();
+  return mediaStreamTrack;
 }
 
 void MediaStreamTrack::Init(Napi::Env env, Napi::Object exports) {
