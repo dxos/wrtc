@@ -31,10 +31,10 @@ function createData(bitsPerSample) {
 }
 
 function createTest(bitsPerSample) {
-  it(`RTCAudioSource (${bitsPerSample}-bit)`, async () => {
+  it(`(${bitsPerSample}-bit)`, async () => {
     const source = new RTCAudioSource();
     const track = source.createTrack();
-    expect(track.stopped).to.be.false;
+    expect(track.enabled).to.be.true;
     const sink = new RTCAudioSink(track);
     const receivedDataPromise = new Promise(resolve => { sink.ondata = resolve; });
     const data = createData(bitsPerSample);

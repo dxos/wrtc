@@ -119,9 +119,14 @@ namespace node_webrtc {
 			}
 		}
 
-		pc->getUnderlying(this)->SetTrack(track)
-			? Resolve(deferred, info.Env().Undefined())
-			: Reject(deferred, ErrorFactory::CreateInvalidStateError(info.Env(), "Failed to replaceTrack"));
+		auto result = pc->getUnderlying(this)->SetTrack(track);
+
+		if (result) {
+			Resolve(deferred, info.Env().Undefined());
+			this->track = mediaStreamTrack;
+		} else {
+			Reject(deferred, ErrorFactory::CreateInvalidStateError(info.Env(), "Failed to replaceTrack"));
+		}
 		return deferred.Promise();
 	}
 

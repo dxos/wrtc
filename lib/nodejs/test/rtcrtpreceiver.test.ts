@@ -281,7 +281,7 @@ describe('RTCRTPReceiver', it => {
 
 function compareParameters(actual, expected, message) {
   expect(actual.headerExtensions).to.eql(expected.headerExtensions, message);
-  expect(actual.codecs.length).to.eql(expected.codecs.length, message);
+  expect(actual.codecs.length).to.equal(expected.codecs.length, message);
   actual.codecs.forEach((actualCodec, i) => {
     const expectedCodec = expected.codecs[i];
     Object.keys(expectedCodec).forEach(key => {

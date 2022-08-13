@@ -17,7 +17,12 @@ describe('RTCVideoSink', it => {
 
     expect(inputFrame.width).to.equal(outputFrame.width);
     expect(inputFrame.height).to.equal(outputFrame.height);
-    expect(inputFrame.data).to.eql(outputFrame.data);
+
+    expect(inputFrame.data.byteLength).to.equal(outputFrame.data.byteLength);
+
+    for (let i = 0, max = inputFrame.data.length; i < max; ++i)
+      expect(inputFrame.data[i]).to.equal(outputFrame.data[i]);
+
     sink.stop();
     expect(sink.stopped).to.be.true;
     track.stop();

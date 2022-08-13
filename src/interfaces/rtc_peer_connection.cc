@@ -221,12 +221,12 @@ namespace node_webrtc {
 				mediaStreams.push_back(mediaStream);
 			}
 			CONVERT_OR_THROW_AND_RETURN_VOID_NAPI(Env(), mediaStreams, streamArray, Napi::Value)
-				MakeCallback("_ontrack", {
-				  wrappedReceiver->Value(),
-				  streamArray,
-				  Env().Null()
-					});
-			}));
+			MakeCallback("_ontrack", {
+				wrappedReceiver->Value(),
+				streamArray,
+				Env().Null()
+			});
+		}));
 	}
 
 	void RTCPeerConnection::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> rtpTransceiver) {
@@ -290,7 +290,19 @@ namespace node_webrtc {
 				Napi::Error(env, error).ThrowAsJavaScriptException();
 			return env.Undefined();
 		}
+
 		auto rtpSender = result.value();
+		if (isUnifiedPlan()) {
+			rtc::scoped_refptr<webrtc::RtpTransceiverInterface> rtpTransceiver;
+			for (auto candidate : _jinglePeerConnection->GetTransceivers()) {
+				if (candidate->sender() == rtpSender) {
+					rtpTransceiver = candidate;
+				}
+			}
+
+			assert(rtpTransceiver);
+			createOrUpdateTransceiver(rtpTransceiver);
+		}
 
 		return createOrUpdateSender(
 			rtpSender, 
@@ -573,8 +585,9 @@ namespace node_webrtc {
 
 		if (_jinglePeerConnection) {
 			for (const auto& sender : _jinglePeerConnection->GetSenders()) {
+				auto track = sender->track();
 				auto wrappedSender = createOrUpdateSender(
-					sender, sender->track()->kind() == webrtc::MediaStreamTrackInterface::kAudioKind ? "audio" : "video"
+					sender, sender->media_type() == cricket::MediaType::MEDIA_TYPE_AUDIO ? "audio" : "video"
 				);
 				senders.emplace_back(wrappedSender);
 			}
@@ -983,6 +996,9 @@ namespace node_webrtc {
 	}
 
 	rtc::scoped_refptr<webrtc::RtpTransceiverInterface> RTCPeerConnection::getUnderlying(RTCRtpTransceiver* transceiver) {
+		if (!transceiver)
+			return nullptr;
+		
 		auto rtcTransceivers = _jinglePeerConnection->GetTransceivers();
 		for (auto candidate : rtcTransceivers) {
 			if ((uintptr_t)candidate.get() == transceiver->getId()) {

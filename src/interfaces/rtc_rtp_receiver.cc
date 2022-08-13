@@ -74,6 +74,7 @@ namespace node_webrtc {
 	}
 
 	Napi::Value RTCRtpReceiver::GetParameters(const Napi::CallbackInfo& info) {
+		auto parameters = pc->getUnderlying(this)->GetParameters();
 		CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), parameters, result, Napi::Value)
 			return result;
 	}

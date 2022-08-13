@@ -11,15 +11,11 @@ public:
 
 	napi_ref_ptr(napi_ref_ptr&) = delete;
 	napi_ref_ptr(T* ptr) {
-		if (value)
-			ref.Unref();
-		
-		value = ptr;
+		assignValue(ptr);
+	}
 
-		if (ptr)
-			ref = Napi::Reference<Napi::Value>::New(ptr->Value(), 1);
-		else
-			ref = Napi::Reference<Napi::Value>();
+	~napi_ref_ptr() {
+		assignValue(nullptr);
 	}
 
 	T *get() {
@@ -27,6 +23,7 @@ public:
 	}
 
 	napi_ref_ptr &operator=(T* ptr) {
+		assignValue(ptr);
 		return napi_ref_ptr(ptr);
 	}
 
@@ -41,4 +38,19 @@ public:
 private:
 	T* value = nullptr;
 	Napi::Reference<Napi::Value> ref = Napi::Reference<Napi::Value>();
+
+	void assignValue(T* ptr) {
+		if (value == ptr)
+			return;
+
+		if (value)
+			ref.Unref();
+		
+		value = ptr;
+
+		if (ptr)
+			ref = Napi::Reference<Napi::Value>::New(ptr->Value(), 1);
+		else
+			ref = Napi::Reference<Napi::Value>();
+	}
 };

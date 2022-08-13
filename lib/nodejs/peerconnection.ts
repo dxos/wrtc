@@ -21,9 +21,9 @@ function ManagedHandler() {
   return (target, propertyKey, property: PropertyDescriptor) => {
     let handler: Function = target[propertyKey];
 
-    property.value = function (event) {
+    property.value = function (event, ...args) {
       try {
-        return handler.apply(this, [ event ]);
+        return handler.apply(this, [ event, ...args ]);
       } catch (e) {
         console.error(`(@/webrtc) INTERNAL: Caught error in managed handler ${handler.name}: ${e.message}`);
         console.error(e);
@@ -60,6 +60,10 @@ export class RTCPeerConnection extends (native.RTCPeerConnection as typeof NRTCP
       transceiver: transceiver,
       target: this
     });
+  }
+
+  addTrack(track: MediaStreamTrack, ...streams: MediaStream[]): RTCRtpSender {
+    return super.addTrack(track, <any>streams);
   }
 
   /**

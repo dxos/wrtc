@@ -141,16 +141,14 @@ describe('RTCRTPSender', it => {
   });
 });
 
-function getMediaStream() {
+async function getMediaStream() {
   var pc = new RTCPeerConnection();
   var offer = new RTCSessionDescription({ type: 'offer', sdp: sdp });
   var trackEventPromise = new Promise<RTCTrackEvent>(function(resolve) {
     pc.ontrack = resolve;
   });
-  return pc.setRemoteDescription(offer).then(function() {
-    return trackEventPromise;
-  }).then(function(trackEvent) {
-    pc.close();
-    return trackEvent.streams[0];
-  });
+  await pc.setRemoteDescription(offer);
+  let trackEvent = await trackEventPromise;
+  pc.close();
+  return trackEvent.streams[0];
 }

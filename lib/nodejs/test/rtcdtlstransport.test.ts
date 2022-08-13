@@ -1,10 +1,10 @@
 import { Certificate } from '@fidm/x509';
 import { expect } from 'chai';
 import { describe } from 'razmin';
-import { RTCDtlsTransport, RTCIceTransport } from '..';
+import { RTCDtlsTransport, RTCIceTransport, RTCRtpSender, RTCRtpReceiver } from '..';
 import { createRTCPeerConnections, gatherCandidates, negotiate, waitForStateChange } from './lib/pc';
 
-async function testDtlsTransport(createSenderOrReceiver) {
+async function testDtlsTransport(createSenderOrReceiver: (pc: RTCPeerConnection) => RTCRtpSender | RTCRtpReceiver) {
   const [pc1, pc2] = createRTCPeerConnections({}, {}, { handleIce: false });
   const senderOrReceiver = createSenderOrReceiver(pc1);
   expect(senderOrReceiver.transport).to.be.null;
@@ -14,13 +14,14 @@ async function testDtlsTransport(createSenderOrReceiver) {
 
   await negotiate(pc1, pc2);
 
+  senderOrReceiver.transport;
   const { transport } = senderOrReceiver;
   expect(transport).to.be.instanceOf(RTCDtlsTransport);
   expect(transport.state).to.equal('new');
   expect(transport.iceTransport).to.be.instanceOf(RTCIceTransport);
   expect(transport.iceTransport.state).to.equal('new');
-  expect(transport.iceTransport.component).to.equal('rtp');
-  expect(transport.iceTransport.role).to.equal('controlling');
+  expect((transport.iceTransport as any).component).to.equal('rtp');
+  expect((transport.iceTransport as any).role).to.equal('controlling');
 
   const connectingPromise = waitForStateChange(transport, 'connecting');
   const connectedPromise = waitForStateChange(transport, 'connected');
@@ -64,8 +65,8 @@ async function testDtlsTransport(createSenderOrReceiver) {
   expect(transport.state).to.equal('closed');
   expect(transport.iceTransport).to.be.instanceOf(RTCIceTransport);
   expect(transport.iceTransport.state).to.equal('closed');
-  expect(transport.iceTransport.component).to.equal('rtp');
-  expect(transport.iceTransport.role).to.equal('controlling');
+  expect((transport.iceTransport as any).component).to.equal('rtp');
+  expect((transport.iceTransport as any).role).to.equal('controlling');
 }
 
 describe('RTCDtlsTransport', it => {
