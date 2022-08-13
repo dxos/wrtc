@@ -36,7 +36,6 @@ describe('RTCPeerConnection', it => {
 
     pc.onicecandidate = function(candidate) {
       if (candidate.candidate) {
-        console.log(candidate.candidate.candidate);
         if (candidate.candidate.candidate.indexOf('typ srflx') > -1) {
           gotReflective = true;
           finish();
@@ -66,7 +65,6 @@ describe('RTCPeerConnection', it => {
 
     pc.onicecandidate = function(candidate) {
       if (candidate.candidate) {
-        console.log(candidate.candidate.candidate);
         if (candidate.candidate.candidate.indexOf('typ srflx') > -1) {
           gotReflective = true;
         }

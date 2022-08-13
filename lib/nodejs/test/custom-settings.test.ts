@@ -12,7 +12,7 @@ describe('CustomSettings', it => {
     });
   });
   
-  it('custom ports connect concurrently', function(t) {
+  it('custom ports connect concurrently', () => {
     const n = 2;
   
     const portRange = { min: 9000, max: 9010 };

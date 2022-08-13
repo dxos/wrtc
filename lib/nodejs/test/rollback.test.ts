@@ -3,7 +3,7 @@ import { describe } from 'razmin';
 import { RTCPeerConnection } from '..';
 
 describe('rollback', it => {
-  it('local rollback (wrong state)', async t => {
+  it('local rollback (wrong state)', async () => {
     let pc = new RTCPeerConnection(<any>{ sdpSemantics: 'unified-plan' });
     let caughtError;
     try {
@@ -15,7 +15,7 @@ describe('rollback', it => {
     }
     expect(caughtError).to.exist;
   });
-  it('remote rollback (wrong state)', async t => {
+  it('remote rollback (wrong state)', async () => {
     const pc = new RTCPeerConnection(<any>{ sdpSemantics: 'unified-plan' });
     let caughtError;
     try {
@@ -28,7 +28,7 @@ describe('rollback', it => {
 
     expect(caughtError).to.exist;
   });
-  it('local rollback', async t => {
+  it('local rollback', async () => {
     const pc = new RTCPeerConnection(<any>{ sdpSemantics: 'unified-plan' });
     try {
       pc.addTransceiver('audio');
@@ -41,7 +41,7 @@ describe('rollback', it => {
       pc.close();
     }
   });
-  it('remote rollback', async t => {
+  it('remote rollback', async () => {
     const pc1 = new RTCPeerConnection(<any>{ sdpSemantics: 'unified-plan' });
     const pc2 = new RTCPeerConnection(<any>{ sdpSemantics: 'unified-plan' });
     try {
@@ -56,7 +56,7 @@ describe('rollback', it => {
       pc2.close();
     }
   });
-  it('remote rollback', async t => {
+  it('remote rollback', async () => {
     const pc1 = new RTCPeerConnection(<any>{ sdpSemantics: 'unified-plan' });
     const pc2 = new RTCPeerConnection(<any>{ sdpSemantics: 'unified-plan' });
     try {

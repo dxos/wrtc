@@ -16,17 +16,14 @@ describe('RTCPeerConnection', it => {
   });
   
   it('can call createOffer', async () => {
-    function pass(desc) {
-      // save the local description
-      localDesc = desc;
-  
-      // run the checks
-      expect(desc).to.exist;
-      expect(desc.type).to.equal('offer');
-      expect(desc.sdp).to.exist;
-    }
-  
-    await peer.createOffer();
+    let desc = await peer.createOffer();
+    // save the local description
+    localDesc = desc;
+
+    // run the checks
+    expect(desc).to.exist;
+    expect(desc.type).to.equal('offer');
+    expect(desc.sdp).to.exist;
   });
   
   it('setLocalDescription function implemented', () => {

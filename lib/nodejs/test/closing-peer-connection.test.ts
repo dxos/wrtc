@@ -58,11 +58,13 @@ describe('RTCPeerConnection', it => {
       });
   });
   
-  it('make sure onicecandidate handler doesn\'t fire when connection is closed', function(t) {
-    var pc = new RTCPeerConnection({ iceServers: [] });
-    pc.onicecandidate = () => { throw new Error('should not have fired'); };
-    pc.close();
-    setTimeout(() => {}, 100);
+  it('make sure onicecandidate handler doesn\'t fire when connection is closed', async () => {
+    await new Promise<void>(async (resolve, reject) => {
+      var pc = new RTCPeerConnection({ iceServers: [] });
+      pc.onicecandidate = () => { reject(new Error('should not have fired')); };
+      pc.close();
+      await new Promise<void>(r => setTimeout(r, 100));
+      resolve();
+    });
   });
-
 });

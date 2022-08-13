@@ -54,7 +54,7 @@ async function setupRTCDataChannels() {
 }
 
 describe('RTCPeerConnection', it => {
-  it("RTCPeerConnection's destructor fires", async () => {
+  it.skip("RTCPeerConnection's destructor fires", async () => {
     const { destructor, stop } = trackDestructors();
     const pc = new RTCPeerConnection();
     pc.close();
@@ -62,7 +62,7 @@ describe('RTCPeerConnection', it => {
 
     stop();
   });
-  it('Destructors fire in RTCDataChannel use-case', async () => {
+  it.skip('Destructors fire in RTCDataChannel use-case', async () => {
     const { destructor, stop } = trackDestructors();
   
     const { pc1, pc2, dc1, dc2 } = await setupRTCDataChannels();
@@ -87,7 +87,7 @@ describe('RTCPeerConnection', it => {
     
     stop();
   });
-  it('Destructors fire in MediaStreamTrack use-case', async () => {
+  it.skip('Destructors fire in MediaStreamTrack use-case', async () => {
     const { destructor, stop } = trackDestructors();
   
     await (async () => {
@@ -169,13 +169,13 @@ async function testSink(kind) {
 }
 
 describe('RTCAudioSink', it => {
-  it('RTCAudioSink\'s destructor fires', async () => {
+  it.skip('RTCAudioSink\'s destructor fires', async () => {
     await testSink('audio');
   });
 });
 
 describe('RTCVideoSink', it => {
-  it('RTCVideoSink\'s destructor fires', async () => {
+  it.skip('RTCVideoSink\'s destructor fires', async () => {
     await testSink('video');
   });
 });

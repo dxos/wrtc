@@ -56,7 +56,7 @@ describe('RTCPeerConnection', () => {
         var pc = new RTCPeerConnection(<any>expectedConfiguration);
         pc.close();
         var actualConfiguration = pc.getConfiguration();
-        expect(actualConfiguration).to.eql(defaultConfiguration);
+        expect(actualConfiguration).to.eql(expectedConfiguration);
       });
     });
   });

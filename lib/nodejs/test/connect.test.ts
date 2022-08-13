@@ -23,8 +23,6 @@ describe('RTCPeerConnection', it => {
       peers[1].ondatachannel = function(evt) {
         dcs[1] = evt.channel;
         resolve(dcs[1]);
-        console.log(`PEER1 CHANNEL:`)
-        console.dir(dcs[1]);
       };
     });
   
@@ -48,9 +46,6 @@ describe('RTCPeerConnection', it => {
   it('create a datachannel on peer:0', () => {
     expect(dcs[0] = peers[0].createDataChannel('test')).to.exist;
     expect(dcs[0].label).to.equal('test');
-
-    console.log(`************** PEER0 DATA:`);
-    console.dir(dcs[0].constructor.name);
   });
   
   it('createOffer for peer:0', async () => {
@@ -80,7 +75,6 @@ describe('RTCPeerConnection', it => {
       return;
   
     await Promise.all(candidates[0].map(candidate => {
-      console.log(candidate);
       return peers[1].addIceCandidate(candidate);
     }));
   });
@@ -265,8 +259,6 @@ describe('RTCPeerConnection', it => {
         throw new Error(error);
         return;
       }
-      // eslint-disable-next-line no-console
-      //console.log(reports);
     }
   
     peers.forEach(peer =>getStats(peer, done));
@@ -285,8 +277,6 @@ describe('RTCPeerConnection', it => {
       if (error) {
         throw new Error(error);
       }
-      // eslint-disable-next-line no-console
-      //console.log(reports);
     }
   
     peers.forEach(peer => getStats(peer, done));
@@ -311,7 +301,15 @@ describe('RTCPeerConnection', it => {
         expect(error.name).to.equal('InvalidStateError');
       }
 
-      await peers[i].getStats();
+      let caughtError;
+      try {
+        await peers[i].getStats();
+      } catch (error) {
+        caughtError = error;
+      }
+
+      expect(caughtError).to.exist;
+      
       peers[i].close();
     }
     peers = [];
