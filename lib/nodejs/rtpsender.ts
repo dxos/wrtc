@@ -1,3 +1,4 @@
 import * as native from '../../binding';
-export const RTCRtpSender = native.RTCRtpSender;
-export type RTCRtpSender = typeof globalThis.RTCRtpSender;
+import type { RTCDtlsTransport } from './dtlstransport';
+export const RTCRtpSender: typeof globalThis.RTCRtpSender = native.RTCRtpSender;
+export type RTCRtpSender = globalThis.RTCRtpSender;
