@@ -81,9 +81,9 @@ jobs:
                     apt update && apt install sudo
                   fi
             - run: 
-                name: Install platform dependencies via Apt
+                name: Install platform dependencies via Apt and Pip
                 command: |
-                  sudo apt update && sudo apt install cmake build-essential curl git python2 libglib2.0-dev -y
+                  sudo apt update && sudo apt install cmake build-essential curl git python2 python3-pkg-resources libglib2.0-dev -y
                   sudo ln -s `which python2` /usr/local/bin/python
                   set -x
                   gcc --version
