@@ -15,7 +15,7 @@ var skipReflexive = isDarwinOnCircleCi || !process.env.CHECK_REFLEXIVE;
 var pc;
 
 describe('RTCPeerConnection', it => {
-  it('assign ICE server and get reflective candidates', () => {
+  it('assign ICE server and get reflective candidates', async () => {
     pc = new RTCPeerConnection({
       iceServers: [
         {
@@ -51,12 +51,11 @@ describe('RTCPeerConnection', it => {
 
     pc.createDataChannel('test');
 
-    pc.createOffer().then(function(e) {
-      pc.setLocalDescription(new RTCSessionDescription(e));
-    });
+    let e = await pc.createOffer();
+    await pc.setLocalDescription(new RTCSessionDescription(e));
   });
 
-  it('dont assign ICE server and get no reflective candidates', () => {
+  it('dont assign ICE server and get no reflective candidates', async () => {
     pc = new RTCPeerConnection({
       iceServers: []
     });
@@ -81,8 +80,7 @@ describe('RTCPeerConnection', it => {
 
     pc.createDataChannel('test');
 
-    pc.createOffer().then(function(e) {
-      pc.setLocalDescription(new RTCSessionDescription(e));
-    });
+    let e = await pc.createOffer();
+    await pc.setLocalDescription(new RTCSessionDescription(e));
   });
 });

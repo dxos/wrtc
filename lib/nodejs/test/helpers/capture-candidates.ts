@@ -6,7 +6,6 @@ export function captureCandidates(pc: RTCPeerConnection, label: string, received
         // eslint-disable-next-line no-console
         //console.log(evt);
       } else {
-        console.log(` -- Done receiving ICE candidates for ${label}.`);
         resolve(candidates);
       }
     };

@@ -3,7 +3,7 @@ import { RTCPeerConnection } from '..';
 import { expect } from 'chai';
 
 describe('RTCPeerConnection', it => {
-  it('make sure channel is available after after connection is closed on the other side', () => {
+  it('make sure channel is available after after connection is closed on the other side', async () => {
     var peer1 = new RTCPeerConnection({ iceServers: [] });
     var peer2 = new RTCPeerConnection({ iceServers: [] });
   
@@ -42,20 +42,12 @@ describe('RTCPeerConnection', it => {
     channel1.onopen = ready;
     channel2.onopen = ready;
   
-    peer1.createOffer({})
-      .then(function(offer) {
-        return peer1.setLocalDescription(offer);
-      })
-      .then(function() {
-        peer2.setRemoteDescription(peer1.localDescription);
-        return peer2.createAnswer();
-      })
-      .then(function(answer) {
-        return peer2.setLocalDescription(answer);
-      })
-      .then(function() {
-        peer1.setRemoteDescription(peer2.localDescription);
-      });
+    let offer = await peer1.createOffer({});
+    await peer1.setLocalDescription(offer);
+    peer2.setRemoteDescription(peer1.localDescription);
+    let answer = await peer2.createAnswer();
+    await peer2.setLocalDescription(answer);
+    peer1.setRemoteDescription(peer2.localDescription);
   });
   
   it('make sure onicecandidate handler doesn\'t fire when connection is closed', async () => {

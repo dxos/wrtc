@@ -148,27 +148,31 @@ describe('RTCPeerConnection', it => {
    * @param {string|Uint8Array} message
    * @returns {Promise<void>}
    */
-  function testSendingAMessage(sender: RTCDataChannel, receiver: RTCDataChannel, message: string | Uint8Array) {
+  async function testSendingAMessage(sender: RTCDataChannel, receiver: RTCDataChannel, message: string | Uint8Array) {
     var messageEventPromise = new Promise<MessageEvent>(function(resolve) {
       receiver.addEventListener('message', resolve);
     });
   
     if (typeof message === 'string')
       sender.send(message);
-    else
-      sender.send(message.buffer);
+    else if (message instanceof Buffer)
+      sender.send(message.buffer.slice(message.byteOffset, message.byteOffset + message.length));
+    else if (message instanceof ArrayBuffer)
+      sender.send(message);
+    else if (ArrayBuffer.isView(message))
+      sender.send(message);
     
-    return messageEventPromise.then((messageEvent) => {
-      var data = messageEvent.data;
-      if (typeof message === 'string') {
-        expect(data.length).to.equal(message.length, "String length must match.");
-        expect(data).to.equal(message);
-      } else {
-        data = new Uint8Array(data);
-        expect(data.length).to.equal(message.length, "Uint8Array length must match");
-        expect([].slice.call(data)).to.eql([].slice.call(message));
-      }
-    });
+    let messageEvent = await messageEventPromise;
+
+    var data = messageEvent.data;
+    if (typeof message === 'string') {
+      expect(data.length).to.equal(message.length, "String length must match.");
+      expect(data).to.equal(message);
+    } else {
+      data = new Uint8Array(data);
+      expect(data.length).to.equal(message.length, "Uint8Array length must match");
+      expect([].slice.call(data)).to.eql([].slice.call(message));
+    }
   }
   
   /**
@@ -179,12 +183,11 @@ describe('RTCPeerConnection', it => {
    * @param {number} n
    * @returns {Promise<void>}
    */
-  function testSendingAMessageNTimes(sender, receiver, message, n?) {
+  function testSendingAMessageNTimes(sender: RTCDataChannel, receiver: RTCDataChannel, message, n?: number) {
     return n <= 0
       ? Promise.resolve()
-      : testSendingAMessage(sender, receiver, message).then(function() {
-        return testSendingAMessageNTimes(sender, receiver, message, n - 1);
-      });
+      : testSendingAMessage(sender, receiver, message)
+        .then(() => testSendingAMessageNTimes(sender, receiver, message, n - 1));
   }
   
   /**
@@ -198,17 +201,18 @@ describe('RTCPeerConnection', it => {
    *   "buffer"
    * @returns {Promise<void>}
    */
-  function testSendingAMessageWithOptions(sender, receiver, message, options) {
+  function testSendingAMessageWithOptions(sender: RTCDataChannel, receiver: RTCDataChannel, message, options) {
     options = Object.assign({
       times: 1,
       type: 'string'
     }, options);
     if (options.type === 'arraybuffer') {
-      message = new Uint8Array(message.split('').map(function(char) {
+      let messageStr = <string>message;
+      message = new Uint8Array(Array.from(messageStr).map(char => {
         return char.charCodeAt(0);
       }));
     } else if (options.type === 'buffer') {
-      message = Buffer.from(message);
+      message = Buffer.from(message, 'utf-8');
     }
     return testSendingAMessageNTimes(sender, receiver, message, options.times);
   }
@@ -220,15 +224,27 @@ describe('RTCPeerConnection', it => {
 
     // First, test sending strings.
     await testSendingAMessageWithOptions(sender, receiver, message1, { times: 3 });
-    
+  });
+  
+  it('data channel connectivity (arraybuffer)', async () => {
+    var sender = dcs[0];
+    var receiver = dcs[1];
+    var message1 = 'hello world';
+
     // Then, test sending ArrayBuffers.
     await testSendingAMessageWithOptions(sender, receiver, message1, {
       times: 3,
       type: 'arraybuffer'
     });
-    
+  });
+  
+  it('data channel connectivity (buffer)', async () => {
+    var sender = dcs[0];
+    var receiver = dcs[1];
+    var message1 = 'hello world';
+
     // Finally, test sending Buffers.
-    return testSendingAMessageWithOptions(sender, receiver, message1, {
+    await testSendingAMessageWithOptions(sender, receiver, message1, {
       times: 3,
       type: 'buffer'
     });
@@ -288,11 +304,11 @@ describe('RTCPeerConnection', it => {
   
     // make sure nothing crashes after connection is closed and _jinglePeerConnection is null
     for (var i = 0; i < 2; i++) {
-      peers[i].createOffer({});
-      peers[i].createAnswer();
-      peers[i].setLocalDescription({}).then(function() {}, function() {});
-      peers[i].setRemoteDescription({}).then(function() {}, function() {});
-      peers[i].addIceCandidate({}).then(function() {}, function() {});
+      await peers[i].createOffer({}).then(() => {}, () => {});
+      await peers[i].createAnswer().then(() => {}, () => {});
+      await peers[i].setLocalDescription({}).then(() => {}, () => {});
+      await peers[i].setRemoteDescription({}).then(() => {}, () => {});
+      await peers[i].addIceCandidate({}).then(() => {}, () => {});
       try {
         peers[i].createDataChannel('test');
         throw new Error('createDataChannel should throw InvalidStateError');
@@ -309,7 +325,7 @@ describe('RTCPeerConnection', it => {
       }
 
       expect(caughtError).to.exist;
-      
+
       peers[i].close();
     }
     peers = [];
