@@ -103,7 +103,7 @@ set(libc++abi_objects
   cxa_guard.o
   cxa_handlers.o
   cxa_personality.o
-  cxa_unexpected.o
+  cxa_thread_atexit.o
   cxa_vector.o
   cxa_virtual.o
   fallback_malloc.o
@@ -239,6 +239,7 @@ else()
 endif()
 
 set(libc++_include_dir "${libwebrtc_source_dir}/src/buildtools/third_party/libc++/trunk/include")
+set(libc++_config_site_include_dir "${libwebrtc_source_dir}/src/buildtools/third_party/libc++")
 set(libc++abi_include_dir "${libwebrtc_source_dir}/src/buildtools/third_party/libc++abi/trunk/include")
 
 # NOTE(mroberts): I would like this to be INTERFACE.
@@ -376,6 +377,7 @@ else()
   # is to include all the header files here.
   target_include_directories(${MODULE} SYSTEM PRIVATE
     ${libc++_include_dir}
+    ${libc++_config_site_include_dir}
     ${libc++abi_include_dir}
   )
 
