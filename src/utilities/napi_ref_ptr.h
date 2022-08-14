@@ -22,7 +22,7 @@ public:
 		return value;
 	}
 
-	napi_ref_ptr &operator=(T* ptr) {
+	napi_ref_ptr operator=(T* ptr) {
 		assignValue(ptr);
 		return napi_ref_ptr(ptr);
 	}
