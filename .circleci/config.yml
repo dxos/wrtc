@@ -296,7 +296,7 @@ workflows:
           matrix:
             parameters:
               os: [linux-x86_64]
-              node-version: ["14.17.6"]
+              node-version: ["16.9.0"]
               release-type: ["Debug"]
               #os: [linux-x86_64, linux-arm64, macos]
               #node-version: ["14.17.6", "16.9.0"]
