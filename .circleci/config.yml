@@ -51,6 +51,7 @@ jobs:
                 name: Configure debug build
                 command: |
                   echo 'export CMAKE_BUILD_TYPE="Debug"' >> $BASH_ENV
+                  echo 'export DEBUG="true"' >> $BASH_ENV
       
       ###
       # MACOS SPECIFIC SETUP
