@@ -88,6 +88,7 @@
     "native:build:release": "ncmake build",
     "native:build:debug": "ncmake build --debug -j 24",
     "native:build:clean": "ncmake clean",
+    "native:build:configure": "ncmake configure",
     "install-example": "node scripts/install-example.js",
     "lint": "eslint lib/*.js lib/**/*.js test/*.js test/**/*.js karma/*.js scripts/*.js",
     "publish-binary": "node scripts/publish.js",
