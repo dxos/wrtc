@@ -3,6 +3,10 @@ orbs:
   node: circleci/node@4.7
 
 executors:
+  win-x86_64:
+    machine:
+      image: windows-default
+    resource_class: windows.medium
   linux-x86_64: &linux-x86_64
     docker:
       - image: ubuntu:22.04
@@ -299,6 +303,6 @@ workflows:
               os: [linux-x86_64]
               node-version: ["16.9.0"]
               release-type: ["Debug"]
-              #os: [linux-x86_64, linux-arm64, macos]
+              #os: [win-x86_64, linux-x86_64, linux-arm64, macos]
               #node-version: ["14.17.6", "16.9.0"]
               #release-type: ["Debug", "Release"]
