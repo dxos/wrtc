@@ -53,16 +53,16 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   _workerThread = rtc::Thread::CreateWithSocketServer();
   assert(_workerThread);
 
-  bool result = _workerThread->SetName("PeerConnectionFactory:workerThread", nullptr);
-  assert(result);
+  // bool result = _workerThread->SetName("PeerConnectionFactory:workerThread", nullptr);
+  // assert(result);
 
-  result = _workerThread->Start();
-  assert(result);
+  // result = _workerThread->Start();
+  // assert(result);
 
   _audioDeviceModule = _workerThread->Invoke<rtc::scoped_refptr<webrtc::AudioDeviceModule>>(RTC_FROM_HERE, [audioLayer]() {
     return audioLayer.Map([](auto audioLayer) {
       // TODO(mroberts): I'm just trying to get this to compile right now.
-      // We need to call something like CreateDefaultTaskQueueFactory().
+      // We need to call something like CreateDefaultzTaskQueueFactory().
       // This code is currently unused, though.
       return webrtc::AudioDeviceModule::Create(audioLayer, nullptr);
     }).Or([]() {
