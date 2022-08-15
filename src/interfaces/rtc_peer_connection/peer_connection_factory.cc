@@ -75,11 +75,11 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   _signalingThread = rtc::Thread::Create();
   assert(_signalingThread);
 
-  result = _signalingThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
-  assert(result);
+  // result = _signalingThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
+  // assert(result);
 
-  result = _signalingThread->Start();
-  assert(result);
+  // result = _signalingThread->Start();
+  // assert(result);
 
   _factory = webrtc::CreatePeerConnectionFactory(
           _workerThread.get(),
