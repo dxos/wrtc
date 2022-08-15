@@ -15,6 +15,9 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
+            "sourceFileMap": {
+                "./../../download/src": "${workspaceFolder}/build/external/libwebrtc/download/src"
+            },
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
