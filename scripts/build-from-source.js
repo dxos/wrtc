@@ -8,6 +8,7 @@ const args = ['configure'];
 const DEBUG = !!process.env.DEBUG;
 
 if (DEBUG) {
+  console.log(`** Enable debug configuration`);
   args.push('--debug');
 }
 
@@ -28,10 +29,12 @@ function main() {
 
   let buildArgs = ['build'];
 
-  if (DEBUG)
+  if (DEBUG) {
+    console.log(`** Enabling debug build`);
     buildArgs.push('--debug');
+  }
   
-  console.log('Running ncmake build');
+  console.log(`Running ncmake build ${buildArgs.join(' ')}`);
   status = spawnSync('ncmake', buildArgs, {
     shell: true,
     stdio: 'inherit'
