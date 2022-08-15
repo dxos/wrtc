@@ -44,6 +44,8 @@ add_dependencies(libc++ libwebrtc)
 set(libc++_objects
   algorithm.o
   any.o
+  atomic.o
+  barrier.o
   bind.o
   charconv.o
   chrono.o
@@ -54,6 +56,7 @@ set(libc++_objects
   functional.o
   future.o
   hash.o
+  ios.instantiations.o
   ios.o
   iostream.o
   locale.o
@@ -63,6 +66,7 @@ set(libc++_objects
   new.o
   optional.o
   random.o
+  random_shuffle.o
   regex.o
   shared_mutex.o
   stdexcept.o
@@ -393,6 +397,7 @@ else()
   target_compile_options(${MODULE} PRIVATE
     -fno-rtti
     -fvisibility=hidden
+    -std=c++0x
     -nostdinc++
     -nodefaultlibs
     -Wall
