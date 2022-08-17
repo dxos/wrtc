@@ -12,7 +12,8 @@ if [[ "$TARGET_ARCH" == arm* ]]; then
 fi
 
 if [ -z "$PARALLELISM" ]; then
-  ninja $TARGETS -j 24
-else
-  ninja $TARGETS -j $PARALLELISM
+  PARALLELISM=24
 fi
+
+#ninja $TARGETS -j $PARALLELISM
+ninja -j $PARALLELISM
