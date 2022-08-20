@@ -397,6 +397,7 @@ else()
   target_compile_options(${MODULE} PRIVATE
     -fno-rtti
     -fvisibility=hidden
+    -pthread
     -nostdinc++
     -nodefaultlibs
     -Wall
