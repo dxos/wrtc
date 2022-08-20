@@ -41,7 +41,7 @@ static void dispose(void*) {
 }
 
 static Napi::Object Init(Napi::Env env, Napi::Object exports) {
-  rtc::LogMessage::SetLogToStderr(false);
+  //rtc::LogMessage::SetLogToStderr(false);
 
   node_webrtc::AsyncContextReleaser::Init(env, exports);
   node_webrtc::ErrorFactory::Init(env, exports);
