@@ -42,6 +42,7 @@ int PeerConnectionFactory::_references = 0;
 PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<PeerConnectionFactory>(info) {
   auto env = info.Env();
+  bool result = false;
 
   if (!info.IsConstructCall()) {
     Napi::TypeError::New(env, "Use the new operator to construct a PeerConnectionFactory.").ThrowAsJavaScriptException();
@@ -66,7 +67,7 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   _workerThread = rtc::Thread::CreateWithSocketServer();
   assert(_workerThread);
 
-  bool result = _workerThread->SetName("PeerConnectionFactory:workerThread", nullptr);
+  result = _workerThread->SetName("PeerConnectionFactory:workerThread", nullptr);
   assert(result);
 
   result = _workerThread->Start();
