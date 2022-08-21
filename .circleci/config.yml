@@ -117,6 +117,9 @@ jobs:
             - run:
                 name: Install CMake and Python via Chocolatey
                 command: choco install -y cmake python
+            - run:
+                name: Aliasing python to python3 for gn sake
+                command: cp /c/tools/miniconda3/python.exe /c/tools/miniconda3/python3.exe
 
       ###
       # LINUX SPECIFIC SETUP
