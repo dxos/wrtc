@@ -110,6 +110,12 @@ The table below maps our support intentions to which configurations have been va
   </tbody>
 </table>
 
+## Platform-specific details
+
+### Linux
+
+Other libwebrtc bindings use Google's in-tree `libc++` when targetting Linux. Due to compatibility issues, and to reduce the need for multiple C++ standard libraries to be loaded within a single application when using `@/webrtc` in concert with other native add-ons, we have opted to use the system's `libstdc++` instead. This does mean that you will need a compatible version of `libstdc++` installed when you use the prebuilt versions of the library. If the prebuilt versions give you runtime link errors related to missing versions of `libstdc++`, either install the correct version or use `SKIP_DOWNLOAD=true` when running `npm install` to build from source instead.
+
 # Examples
 
 See [node-webrtc/node-webrtc-examples](https://github.com/node-webrtc/node-webrtc-examples).
