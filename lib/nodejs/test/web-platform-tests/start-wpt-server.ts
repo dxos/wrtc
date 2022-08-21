@@ -11,8 +11,8 @@ const dnsLookup = q.denodeify(dns.lookup);
 const wptDir = path.resolve(__dirname, 'tests');
 
 const configPaths = {
-  default: path.resolve(__dirname, 'wpt-config.json'),
-  toUpstream: path.resolve(__dirname, 'tuwpt-config.json')
+  default: path.resolve(__dirname, '..', '..', '..', '..', 'lib', 'nodejs', 'test', 'web-platform-tests', 'wpt-config.json'),
+  toUpstream: path.resolve(__dirname, '..', '..', '..', '..', 'lib', 'nodejs', 'test', 'web-platform-tests', 'tuwpt-config.json')
 };
 
 const configs = {
@@ -20,7 +20,7 @@ const configs = {
   toUpstream: require(configPaths.toUpstream)
 };
 
-module.exports = ({ toUpstream = false } = {}) => {
+export default ({ toUpstream = false } = {}) => {
   if (inBrowserContext()) {
     return Promise.resolve();
   }
@@ -42,7 +42,7 @@ module.exports = ({ toUpstream = false } = {}) => {
 
       return new Promise((resolve, reject) => {
         python.on('error', e => {
-          reject(new Error('Error starting python server process:', e.message));
+          reject(new Error(`Error starting python server process: ${e.message}`));
         });
 
         resolve(pollForServer(urlPrefix));

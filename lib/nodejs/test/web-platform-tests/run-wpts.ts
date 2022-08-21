@@ -1,11 +1,11 @@
 'use strict';
-const path = require('path');
-const fs = require('fs');
-const jsYAML = require('js-yaml');
-const { Minimatch } = require('minimatch');
-const { describe, specify, before } = require('mocha-sugar-free');
-const { readManifest, getPossibleTestFilePaths, stripPrefix } = require('./wpt-manifest-utils.js');
-const startWPTServer = require('./start-wpt-server.js');
+import path from 'path';
+import fs from 'fs';
+import jsYAML from 'js-yaml';
+import { Minimatch } from 'minimatch';
+import { describe, specify, before } from 'mocha-sugar-free';
+import { readManifest, getPossibleTestFilePaths, stripPrefix } from './wpt-manifest-utils.js';
+import startWPTServer from './start-wpt-server.js';
 
 const validReasons = new Set([
   'fail',
@@ -20,11 +20,11 @@ const validReasons = new Set([
 const hasNode10 = Number(process.versions.node.split('.')[0]) >= 10;
 const hasNode11 = Number(process.versions.node.split('.')[0]) >= 11;
 
-const manifestFilename = path.resolve(__dirname, 'wpt-manifest.json');
+const manifestFilename = path.resolve(__dirname, '..', '..', '..', '..', 'lib', 'nodejs', 'test', 'web-platform-tests', 'wpt-manifest.json');
 const manifest = readManifest(manifestFilename);
 const possibleTestFilePaths = getPossibleTestFilePaths(manifest);
 
-const toRunFilename = path.resolve(__dirname, 'to-run.yaml');
+const toRunFilename = path.resolve(__dirname, '..', '..', '..', '..', 'lib', 'nodejs', 'test', 'web-platform-tests', 'to-run.yaml');
 const toRunString = fs.readFileSync(toRunFilename, { encoding: 'utf-8' });
 const toRunDocs = jsYAML.safeLoadAll(toRunString, { filename: toRunFilename });
 
@@ -33,7 +33,7 @@ const minimatchers = new Map();
 checkToRun();
 
 let wptServerURL;
-const runSingleWPT = require('./run-single-wpt.js')(() => wptServerURL);
+const runSingleWPT = require(path.join(__dirname, 'run-single-wpt.js'))(() => wptServerURL);
 before({ timeout: 30 * 1000 }, () => {
   return startWPTServer({ toUpstream: false }).then(url => {
     wptServerURL = url;
@@ -80,7 +80,7 @@ function checkToRun() {
       throw new Error(`DIR entries must not end with a slash: saw "${doc.DIR}"`);
     }
 
-    if (!fs.existsSync(path.resolve(__dirname, 'tests', doc.DIR))) {
+    if (!fs.existsSync(path.resolve(__dirname, '..', '..', '..', '..', 'web-platform-tests', doc.DIR))) {
       throw new Error(`The directory "${doc.DIR}" does not exist`);
     }
 

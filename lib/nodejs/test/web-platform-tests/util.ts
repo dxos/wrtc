@@ -1,14 +1,16 @@
 'use strict';
-const path = require('path');
-const fs = require('fs');
-const http = require('http');
-const https = require('https');
-const enableDestroy = require('server-destroy');
-const request = require('request');
-const { JSDOM } = require('jsdom');
-const { Canvas } = require('jsdom/lib/jsdom/utils');
+import path from 'path';
+import fs from 'fs';
+import http from 'http';
+import https from 'https';
+import enableDestroy from 'server-destroy';
+import request from 'request';
+import { JSDOM } from 'jsdom';
+import { Canvas } from 'jsdom/lib/jsdom/utils';
 
-function toPathname(dirname, relativePath) {
+declare var WorkerGlobalScope;
+
+function toPathname2(dirname, relativePath) {
   let pathname = path.resolve(dirname, relativePath).replace(/\\/g, '/');
   if (pathname[0] !== '/') {
     pathname = '/' + pathname;
@@ -16,23 +18,23 @@ function toPathname(dirname, relativePath) {
   return pathname;
 }
 
-function toFileUrl(dirname, relativePath) {
-  return 'file://' + toPathname(dirname, relativePath);
+function toFileUrl2(dirname, relativePath) {
+  return 'file://' + toPathname2(dirname, relativePath);
 }
 
-exports.toFileUrl = dirname => {
+export const toFileUrl = dirname => {
   return function(relativePath) {
-    return toFileUrl(dirname, relativePath);
+    return toFileUrl2(dirname, relativePath);
   };
 };
 
-exports.toPathname = dirname => {
+export const toPathname = dirname => {
   return function(relativePath) {
-    return toPathname(dirname, relativePath);
+    return toPathname2(dirname, relativePath);
   };
 };
 
-exports.load = dirname => {
+export const load = dirname => {
   const fileCache = Object.create(null);
 
   return function(name, options) {
@@ -41,7 +43,7 @@ exports.load = dirname => {
     const file = path.resolve(dirname, 'files/' + name + '.html');
 
     if (!options.url) {
-      options.url = toFileUrl(dirname, file);
+      options.url = toFileUrl2(dirname, file);
     }
 
     const contents = fileCache[file] || fs.readFileSync(file, 'utf8');
@@ -56,7 +58,7 @@ exports.load = dirname => {
   };
 };
 
-exports.todo = (test, fn) => {
+export const todo = (test, fn) => {
   fn({
     ok(value, message) {
       test.ok(!value, 'Marked as TODO: ' + message);
@@ -64,12 +66,7 @@ exports.todo = (test, fn) => {
     // add more as needed
   });
 };
-
-exports.injectIFrame = document => {
-  return exports.injectIFrameWithScript(document);
-};
-
-exports.injectIFrameWithScript = (document, scriptStr) => {
+export const injectIFrameWithScript = (document, scriptStr?) => {
   scriptStr = scriptStr || '';
   const iframe = document.createElement('iframe');
   document.body.appendChild(iframe);
@@ -80,6 +77,11 @@ exports.injectIFrameWithScript = (document, scriptStr) => {
 
   return iframe;
 };
+
+export const injectIFrame = document => {
+  return injectIFrameWithScript(document);
+};
+
 
 /**
  * Create a new Promise and call the given function with a resolver function which can be passed as a node
@@ -93,7 +95,7 @@ exports.injectIFrameWithScript = (document, scriptStr) => {
  * @param {Function} fn
  * @returns {Promise}
  */
-exports.nodeResolverPromise = fn => {
+export const nodeResolverPromise = fn => {
   return new Promise((resolve, reject) => {
     fn(function(error, result) {
       if (error) {
@@ -117,7 +119,7 @@ exports.nodeResolverPromise = fn => {
  * Is this script currently running within a Web Worker context?
  * @returns {boolean}
  */
-exports.inWebWorkerContext = () => {
+export const inWebWorkerContext = () => {
   /* globals WorkerGlobalScope, self */
   return typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope;
 };
@@ -127,9 +129,9 @@ exports.inWebWorkerContext = () => {
  * Note: also returns true within a Web Worker context
  * @returns {boolean}
  */
-exports.inBrowserContext = () => {
+export const inBrowserContext = () => {
   /* globals window */
-  return (typeof window === 'object' && window === window.self) || exports.inWebWorkerContext();
+  return (typeof window === 'object' && window === window.self) || inWebWorkerContext();
 };
 
 /**
@@ -139,14 +141,14 @@ exports.inBrowserContext = () => {
  * @param {string} relativePath Relative path within the test directory. For example "jsdom/files/test.html"
  * @returns {string} URL
  */
-exports.getTestFixtureUrl = relativePath => {
+export const getTestFixtureUrl = relativePath => {
   /* globals location */
-  if (exports.inBrowserContext()) {
+  if (inBrowserContext()) {
     // location is a Location or WorkerLocation
     return location.origin + '/base/test' + (relativePath[0] === '/' ? '' : '/') + relativePath;
   }
 
-  return toFileUrl(__dirname, relativePath);
+  return toFileUrl2(__dirname, relativePath);
 };
 
 /**
@@ -155,12 +157,12 @@ exports.getTestFixtureUrl = relativePath => {
  * If running tests using karma, a http request will be performed to retrieve the file using karma's server.
  * @param {string} relativePath Relative path within the test directory. For example "jsdom/files/test.html"
  */
-exports.readTestFixture = relativePath => {
-  const useRequest = exports.inBrowserContext();
+export const readTestFixture = relativePath => {
+  const useRequest = inBrowserContext();
 
-  return exports.nodeResolverPromise(nodeResolver => {
+  return nodeResolverPromise(nodeResolver => {
     if (useRequest) {
-      request.get(exports.getTestFixtureUrl(relativePath), { timeout: 5000 }, nodeResolver);
+      request.get(getTestFixtureUrl(relativePath), { timeout: 5000 }, nodeResolver);
     } else {
       fs.readFile(path.resolve(__dirname, relativePath), { encoding: 'utf8' }, nodeResolver);
     }
@@ -170,7 +172,7 @@ exports.readTestFixture = relativePath => {
     .then(result => useRequest ? result[1] : result);
 };
 
-exports.isCanvasInstalled = (t, done) => {
+export const isCanvasInstalled = (t, done) => {
   if (!Canvas) {
     t.ok(true, 'test ignored; not running with the canvas npm package installed');
     done();
@@ -180,9 +182,9 @@ exports.isCanvasInstalled = (t, done) => {
   return true;
 };
 
-exports.delay = ms => new Promise(r => setTimeout(r, ms));
+export const delay = ms => new Promise(r => setTimeout(r, ms));
 
-exports.createServer = handler => {
+export const createServer = handler => {
   return new Promise(resolve => {
     const server = http.createServer(handler);
     enablePromisifiedServerDestroy(server);
@@ -190,7 +192,7 @@ exports.createServer = handler => {
   });
 };
 
-exports.createHTTPSServer = handler => {
+export const createHTTPSServer = handler => {
   return new Promise(resolve => {
     const options = {
       key: fs.readFileSync(path.resolve(__dirname, 'api/fixtures/key.pem')),
@@ -207,7 +209,7 @@ function enablePromisifiedServerDestroy(server) {
   enableDestroy(server);
   const originalDestroy = server.destroy;
   server.destroy = function() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       originalDestroy.call(this, err => {
         if (err) {
           reject(err);

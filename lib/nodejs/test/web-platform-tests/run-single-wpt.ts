@@ -1,13 +1,13 @@
 'use strict';
 /* eslint-disable no-console */
-const path = require('path');
-const { URL } = require('url');
-const { specify } = require('mocha-sugar-free');
-const { inBrowserContext } = require('./util.js');
-const { JSDOM, VirtualConsole } = require('jsdom/lib/api.js');
-const ResourceLoader = require('jsdom/lib/jsdom/browser/resources/resource-loader');
-const wrtc = require('../..');
-const fetch = require('node-fetch');
+import path from 'path';
+import { URL } from 'url';
+import { specify } from 'mocha-sugar-free';
+import { inBrowserContext } from './util';
+import { JSDOM, VirtualConsole } from 'jsdom/lib/api.js';
+import ResourceLoader from 'jsdom/lib/jsdom/browser/resources/resource-loader';
+import * as wrtc from '../..';
+import fetch from 'node-fetch';
 
 const reporterPathname = '/resources/testharnessreport.js';
 
@@ -105,7 +105,7 @@ function createJSDOM(urlPrefix, testPath, expectFail) {
         return fetch.apply(null, args);
       };
 
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const errors = [];
 
         window.shimTest = () => {

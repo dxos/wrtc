@@ -1,14 +1,14 @@
 'use strict';
-const fs = require('fs');
+import fs from 'fs';
 
 const EXPECTED_MANIFEST_VERSION = 6;
 
-exports.getPossibleTestFilePaths = manifest => {
+export const getPossibleTestFilePaths = manifest => {
   const testharnessTests = manifest.items.testharness;
 
   const allPaths = [];
   for (const containerPath of Object.keys(testharnessTests)) {
-    const testFilePaths = testharnessTests[containerPath].map(value => value[[0]]);
+    const testFilePaths = testharnessTests[containerPath].map(value => value[0]);
     for (const testFilePath of testFilePaths) {
       // Globally disable worker tests
       if (testFilePath.endsWith('.worker.html') ||
@@ -24,9 +24,9 @@ exports.getPossibleTestFilePaths = manifest => {
   return allPaths;
 };
 
-exports.stripPrefix = (string, prefix) => string.substring(prefix.length);
+export const stripPrefix = (string, prefix) => string.substring(prefix.length);
 
-exports.readManifest = filename => {
+export const readManifest = filename => {
   const manifestString = fs.readFileSync(filename, { encoding: 'utf-8' });
   const manifest = JSON.parse(manifestString);
 
