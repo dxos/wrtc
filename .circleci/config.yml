@@ -169,7 +169,8 @@ jobs:
             export PARALLELISM=2 # Reduce PARALLELISM during the build; otherwise, we run out of memory.
             export TAR_OPTIONS=--no-same-owner # This fixes up some odd behavior when untar-ing as root.
             export SKIP_DOWNLOAD=true # Do not use prebuilt binaries
-            
+            export PATH="$PATH:/c/Program Files/CMake/bin" # Needed for Windows
+
             npm install
 
             # TODO
