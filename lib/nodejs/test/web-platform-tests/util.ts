@@ -8,6 +8,8 @@ import request from 'request';
 import { JSDOM } from 'jsdom';
 import { Canvas } from 'jsdom/lib/jsdom/utils';
 
+declare var WorkerGlobalScope;
+
 function toPathname(dirname, relativePath) {
   let pathname = path.resolve(dirname, relativePath).replace(/\\/g, '/');
   if (pathname[0] !== '/') {
