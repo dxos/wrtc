@@ -1,7 +1,7 @@
 # @/webrtc
 
-> ✅ **Stable**  
-> This library is ready for production use.
+> 🚧 **Work In Progress**  
+> This library is not yet ready for use and is unreleased
 
 > 📺 Part of the [**Astronaut Labs Broadcast Suite**](https://github.com/astronautlabs/broadcast)
 
