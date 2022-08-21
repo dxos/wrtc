@@ -222,6 +222,10 @@ jobs:
       # WEB PLATFORM TESTS
       ###
       - run:
+          name: Setup /etc/hosts for Web Platform Tests (x86_64-only)
+          command: |
+            cat ci/wpt-hosts >>/etc/hosts
+      - run:
           name: Run Web Platform Tests (x86_64-only)
           command: |
             if [[ "$TARGET_ARCH" == arm* ]]; then
@@ -235,10 +239,6 @@ jobs:
 
             npm run wpt:init
             npm run wpt:test
-      - run:
-          name: Setup /etc/hosts for Web Platform Tests (x86_64-only)
-          command: |
-            cat ci/wpt-hosts >>/etc/hosts
       
       ###
       # RUN BROWSER TESTS (linux only for now)
