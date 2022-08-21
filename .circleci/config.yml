@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@4.7
+  win: circleci/windows@4.1.1
 
 executors:
   linux-x86_64: &linux-x86_64
@@ -25,6 +26,11 @@ executors:
       TARGET_ARCH: x86_64
       CMAKE_BUILD_TYPE: Release
       PLATFORM: darwin
+  windows: &windows
+    machine:
+      image: 'windows-server-2019-vs2019:stable'
+      resource_class: windows.medium
+      shell: bash.exe
 
 jobs:
   build:
@@ -40,7 +46,38 @@ jobs:
     steps:
 
       ###
-      # CONFIGURE BUILD TYPE
+      # SET TARGET_PLATFORM
+      # - This is used for cache keys
+      ###
+      - when:
+          condition:
+            equal: [ *windows, << parameters.os >> ]
+          steps:
+            - run:
+                name: Configure target platform (Windows)
+                command: |
+                  echo 'export TARGET_PLATFORM="windows"' >> $BASH_ENV
+      - when:
+          condition:
+            equal: [ *macos, << parameters.os >> ]
+          steps:
+            - run:
+                name: Configure target platform (macOS)
+                command: |
+                  echo 'export TARGET_PLATFORM="macos"' >> $BASH_ENV
+      - when:
+          condition:
+            or:
+              - equal: [ *linux-x86_64, << parameters.os >> ]
+              - equal: [ *linux-arm64, << parameters.os >> ]
+          steps:
+            - run:
+                name: Configure target platform (Linux)
+                command: |
+                  echo 'export TARGET_PLATFORM="linux"' >> $BASH_ENV
+      
+      ###
+      # CONFIGURE DEBUG BUILDS
       ###
 
       - when:
@@ -65,6 +102,18 @@ jobs:
                 name: Install CMake and Python2 via Homebrew
                 command: brew install cmake kamilturek/python2/python@2
         
+      ###
+      # WINDOWS SPECIFIC SETUP
+      ###
+      
+      - when:
+          condition:
+            equal: [ *windows, << parameters.os >> ]
+          steps:
+            - run:
+                name: Install CMake and Python via Homebrew
+                command: choco install -y cmake python nodejs
+
       ###
       # LINUX SPECIFIC SETUP
       ###
@@ -94,15 +143,19 @@ jobs:
       ###
       # MAIN SETUP
       ###
-
       - node/install:
           node-version: << parameters.node-version >>
       - checkout
+      - run:
+          name: Build environment
+          command: |
+            env
       - run:
           name: Before restore cache...
           command: |
             echo >>CACHE_KEY "TARGET_ARCH=$TARGET_ARCH"
             echo >>CACHE_KEY "CMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE"
+            echo >>CACHE_KEY "TARGET_PLATFORM=$TARGET_PLATFORM"
             cat CACHE_KEY
       - restore_cache:
           key: asset-cache-v1-{{ arch }}-{{ checksum "CACHE_KEY" }}-{{ checksum "CMakeLists.txt" }}
@@ -296,7 +349,7 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: [linux-x86_64]
+              os: [linux-x86_64, windows]
               node-version: ["16.9.0"]
               release-type: ["Debug"]
               #os: [linux-x86_64, linux-arm64, macos]
