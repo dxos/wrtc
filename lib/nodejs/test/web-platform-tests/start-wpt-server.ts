@@ -9,7 +9,7 @@ import { head as requestHead } from 'request-promise-native';
 const dnsLookup = q.denodeify(dns.lookup);
 import which from 'which';
 
-const wptDir = path.resolve(__dirname, 'tests');
+const wptDir = path.resolve(__dirname, '..', '..', '..', '..', 'web-platform-tests');
 
 const configPaths = {
   default: path.resolve(__dirname, '..', '..', '..', '..', 'lib', 'nodejs', 'test', 'web-platform-tests', 'wpt-config.json'),
@@ -42,9 +42,10 @@ export default async ({ toUpstream = false } = {}) => {
   const configArg = path.relative(path.resolve(wptDir), configPath);
   const args = ['./wpt.py', 'serve', '--config', configArg];
 
-  let pythonPath = await which('python');
+  let pythonPath = await which('python3');
 
-  console.log(`Starting WPT server...`);
+  console.log(`Starting WPT server: ${pythonPath} ${args.map(x => `'${x}'`).join(' ')}`);
+  console.log(`    in directory ${wptDir}`);
   const python = childProcess.spawn(pythonPath, args, {
     cwd: wptDir,
     stdio: 'inherit'
