@@ -78,7 +78,6 @@
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",
     "temp": "^0.9.0",
-    "travis-multirunner": "^4.3.0",
     "typescript": "^4.7.4",
     "ws": "^5.2.0",
     "zone.js": "^0.11.8"
@@ -103,8 +102,8 @@
     "test:browsers": "cross-env BROWSER=chrome node scripts/karma.js && cross-env BROWSER=firefox node scripts/karma.js",
     "test:electron": "electron test/electron",
     "wpt:init": "git submodule update --init --recursive",
-    "wpt:reset": "rimraf ./test/web-platform-tests/tests && npm run wpt:init",
-    "wpt:test": "mocha test/web-platform-tests/run-wpts.js --exit",
-    "wpt:update": "git submodule update --recursive --remote --force && cd test/web-platform-tests/tests && python wpt.py manifest --path ../wpt-manifest.json"
+    "wpt:reset": "rimraf ./web-platform-tests && npm run wpt:init",
+    "wpt:test": "npm run build && mocha dist/test/web-platform-tests/run-wpts.js --exit",
+    "wpt:update": "git submodule update --recursive --remote --force && cd web-platform-tests && python wpt.py manifest --path ../lib/nodejs/test/web-platform-tests/wpt-manifest.json"
   }
 }
