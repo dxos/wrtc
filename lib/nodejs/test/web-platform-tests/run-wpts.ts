@@ -1,11 +1,11 @@
 'use strict';
-const path = require('path');
-const fs = require('fs');
-const jsYAML = require('js-yaml');
-const { Minimatch } = require('minimatch');
-const { describe, specify, before } = require('mocha-sugar-free');
-const { readManifest, getPossibleTestFilePaths, stripPrefix } = require('./wpt-manifest-utils.js');
-const startWPTServer = require('./start-wpt-server.js');
+import path from 'path';
+import fs from 'fs';
+import jsYAML from 'js-yaml';
+import { Minimatch } from 'minimatch';
+import { describe, specify, before } from 'mocha-sugar-free';
+import { readManifest, getPossibleTestFilePaths, stripPrefix } from './wpt-manifest-utils.js';
+import startWPTServer from './start-wpt-server.js';
 
 const validReasons = new Set([
   'fail',

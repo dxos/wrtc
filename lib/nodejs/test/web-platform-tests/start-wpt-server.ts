@@ -20,7 +20,7 @@ const configs = {
   toUpstream: require(configPaths.toUpstream)
 };
 
-module.exports = ({ toUpstream = false } = {}) => {
+export default ({ toUpstream = false } = {}) => {
   if (inBrowserContext()) {
     return Promise.resolve();
   }
@@ -42,7 +42,7 @@ module.exports = ({ toUpstream = false } = {}) => {
 
       return new Promise((resolve, reject) => {
         python.on('error', e => {
-          reject(new Error('Error starting python server process:', e.message));
+          reject(new Error(`Error starting python server process: ${e.message}`));
         });
 
         resolve(pollForServer(urlPrefix));

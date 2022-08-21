@@ -1,12 +1,12 @@
 'use strict';
-const path = require('path');
-const fs = require('fs');
-const http = require('http');
-const https = require('https');
-const enableDestroy = require('server-destroy');
-const request = require('request');
-const { JSDOM } = require('jsdom');
-const { Canvas } = require('jsdom/lib/jsdom/utils');
+import path from 'path';
+import fs from 'fs';
+import http from 'http';
+import https from 'https';
+import enableDestroy from 'server-destroy';
+import request from 'request';
+import { JSDOM } from 'jsdom';
+import { Canvas } from 'jsdom/lib/jsdom/utils';
 
 function toPathname(dirname, relativePath) {
   let pathname = path.resolve(dirname, relativePath).replace(/\\/g, '/');
@@ -207,7 +207,7 @@ function enablePromisifiedServerDestroy(server) {
   enableDestroy(server);
   const originalDestroy = server.destroy;
   server.destroy = function() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       originalDestroy.call(this, err => {
         if (err) {
           reject(err);
