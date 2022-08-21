@@ -39,7 +39,7 @@ set(libwebrtc_binary_dir ${CMAKE_BINARY_DIR}/external/libwebrtc/build/${CMAKE_BU
 set(libwebrtc_src_dir ${CMAKE_BINARY_DIR}/external/libwebrtc/download/src)
 
 add_library(libc++ OBJECT IMPORTED)
-add_dependencies(libc++ libwebrtc)
+#add_dependencies(libc++ libwebrtc)
 
 set(libc++_objects
   algorithm.o
@@ -95,7 +95,7 @@ set_target_properties(libc++ PROPERTIES IMPORTED_OBJECTS_DEBUG "${libc++_objects
 # -----------------------------------------------------------------------------
 
 add_library(libc++abi OBJECT IMPORTED)
-add_dependencies(libc++abi libwebrtc)
+#add_dependencies(libc++abi libwebrtc)
 
 set(libc++abi_objects
   abort_message.o
@@ -137,6 +137,8 @@ list(APPEND GN_GEN_ARGS
   rtc_use_x11=false
   rtc_enable_protobuf=false
   rtc_use_gtk=false
+  use_custom_libcxx=false 
+  use_custom_libcxx_for_host=false
   rtc_include_pulse_audio=false
   rtc_include_tests=false
 )
@@ -191,8 +193,8 @@ if (WIN32)
   )
 else()
   set(byproducts
-    ${libc++_objects}
-    ${libc++abi_objects}
+    #${libc++_objects}
+    #${libc++abi_objects}
     ${libwebrtc_binary_dir}/obj/libwebrtc.a
     ${libwebrtc_binary_dir}/obj/pc/libpeerconnection.a
   )
@@ -379,26 +381,27 @@ else()
   #   https://gitlab.kitware.com/cmake/cmake/issues/15052
   #
   # is to include all the header files here.
-  target_include_directories(${MODULE} SYSTEM PRIVATE
-    ${libc++_include_dir}
-    ${libc++_config_site_include_dir}
-    ${libc++abi_include_dir}
-  )
+  # target_include_directories(${MODULE} SYSTEM PRIVATE
+  #   ${libc++_include_dir}
+  #   ${libc++_config_site_include_dir}
+  #   ${libc++abi_include_dir}
+  # )
 
   # NOTE(mroberts): On Linux and macOS, we statically link the same libc++ and
   # libc++abi libraries that libwebrtc builds against.
   target_link_libraries(${MODULE} PRIVATE
     -lc
     -lm
-    libc++
-    libc++abi
+    #libc++
+    #libc++abi
   )
 
   target_compile_options(${MODULE} PRIVATE
     -fno-rtti
     -fvisibility=hidden
-    -nostdinc++
-    -nodefaultlibs
+    -pthread
+    #-nostdinc++
+    #-nodefaultlibs
     -Wall
     -Wextra
     -Wno-missing-field-initializers
@@ -409,7 +412,7 @@ else()
   )
 
   target_compile_definitions(${MODULE} PRIVATE
-    -D_LIBCPP_ABI_UNSTABLE
+    #-D_LIBCPP_ABI_UNSTABLE
     -DWEBRTC_POSIX=1
   )
 
@@ -448,7 +451,7 @@ else()
     )
 
     target_compile_definitions(${MODULE} PRIVATE
-      -D_LIBCPP_ABI_UNSTABLE
+      #-D_LIBCPP_ABI_UNSTABLE
       -DWEBRTC_MAC
       -DWEBRTC_IOS
     )

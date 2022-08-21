@@ -26,6 +26,7 @@
 
 #include "src/webrtc/test_audio_device_module.h"
 #include "src/webrtc/zero_capturer.h"
+#include <iostream>
 
 namespace node_webrtc {
 
@@ -41,19 +42,31 @@ int PeerConnectionFactory::_references = 0;
 PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<PeerConnectionFactory>(info) {
   auto env = info.Env();
+  bool result = false;
 
   if (!info.IsConstructCall()) {
     Napi::TypeError::New(env, "Use the new operator to construct a PeerConnectionFactory.").ThrowAsJavaScriptException();
     return;
   }
 
+  std::unique_ptr<rtc::Thread> signalThread = rtc::Thread::Create();
+  assert(signalThread);
+
+  result = signalThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
+  assert(result);
+
+  result = signalThread->Start();
+  assert(result);
+
+  this->_signalingThread = std::move(signalThread);
+  
   // TODO(mroberts): Read `audioLayer` from some PeerConnectionFactoryOptions?
   auto audioLayer = MakeNothing<webrtc::AudioDeviceModule::AudioLayer>();
 
   _workerThread = rtc::Thread::CreateWithSocketServer();
   assert(_workerThread);
 
-  bool result = _workerThread->SetName("PeerConnectionFactory:workerThread", nullptr);
+  result = _workerThread->SetName("PeerConnectionFactory:workerThread", nullptr);
   assert(result);
 
   result = _workerThread->Start();
@@ -71,15 +84,6 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
               TestAudioDeviceModule::CreateDiscardRenderer(48000));
     });
   });
-
-  _signalingThread = rtc::Thread::Create();
-  assert(_signalingThread);
-
-  result = _signalingThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
-  assert(result);
-
-  result = _signalingThread->Start();
-  assert(result);
 
   _factory = webrtc::CreatePeerConnectionFactory(
           _workerThread.get(),
