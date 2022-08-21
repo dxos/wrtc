@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  node: circleci/node@4.7
+  node: circleci/node@5.0.2
   win: circleci/windows@4.1.1
 
 executors:
@@ -111,7 +111,7 @@ jobs:
             equal: [ *windows, << parameters.os >> ]
           steps:
             - run:
-                name: Install CMake and Python via Homebrew
+                name: Install CMake and Python via Chocolatey
                 command: choco install -y cmake python nodejs
 
       ###
