@@ -51,12 +51,13 @@ export default async ({ toUpstream = false } = {}) => {
     stdio: 'inherit'
   });
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     python.on('error', e => {
       console.error(`Error starting python server process: ${e.message}`);
       reject(new Error(`Error starting python server process: ${e.message}`));
     });
 
+    await q.delay(2000);
     resolve(pollForServer(urlPrefix));
 
     process.on('exit', () => {

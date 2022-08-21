@@ -47,7 +47,9 @@ class CustomResourceLoader extends ResourceLoader {
       // So, always go to the one in ./tests.
       // The path replacement accounts for a rewrite performed by the WPT server:
       // https://github.com/w3c/web-platform-tests/blob/master/tools/serve/serve.py#L271
-      const filePath = path.resolve(__dirname, 'tests' + url.pathname)
+      
+      const wptDir = path.resolve(__dirname, '..', '..', '..', '..');
+      const filePath = path.resolve(wptDir, 'web-platform-tests' + url.pathname)
         .replace('/resources/WebIDLParser.js', '/resources/webidl2/lib/webidl2.js');
 
       return super.fetch(`file://${filePath}`, options);
@@ -116,6 +118,7 @@ function createJSDOM(urlPrefix, testPath, expectFail) {
             }
             oldSetup(options);
           };
+
 
           window.add_result_callback(test => {
             if (test.status === 1) {

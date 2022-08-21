@@ -238,6 +238,7 @@ jobs:
 
             if [[ "$(uname)" == Linux ]]; then
               sudo apt install --reinstall python-pkg-resources
+              pip3 install --upgrade requests
             fi
 
             npm run wpt:init

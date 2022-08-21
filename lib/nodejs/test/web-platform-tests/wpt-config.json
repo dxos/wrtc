@@ -5,9 +5,7 @@
   "server_host": null,
   "ports": {
     "http": [9000, "auto"],
-    "https": [9443],
-    "ws": ["auto"],
-    "wss": ["auto"]
+    "https": [9443, "auto"]
   },
   "check_subdomains": true,
   "log_level": "info",
