@@ -41,7 +41,12 @@ static void dispose(void*) {
 }
 
 static Napi::Object Init(Napi::Env env, Napi::Object exports) {
-  rtc::LogMessage::SetLogToStderr(false);
+  #ifdef DEBUG
+    // Comment this out when needed, but do not commit.
+    rtc::LogMessage::SetLogToStderr(false);
+  #else
+    rtc::LogMessage::SetLogToStderr(false);
+  #endif 
 
   node_webrtc::AsyncContextReleaser::Init(env, exports);
   node_webrtc::ErrorFactory::Init(env, exports);

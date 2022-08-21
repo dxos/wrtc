@@ -3,7 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${env:HOME}/.cache/node-gyp/14.19.1/include/node"
+                "${env:HOME}/.cache/node-gyp/14.19.1/include/node",
+                "${workspaceFolder}/build/external/libwebrtc/download",
+                "${workspaceFolder}/node_modules"
             ]
         },
         {

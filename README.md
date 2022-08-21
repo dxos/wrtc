@@ -1,7 +1,7 @@
 # @/webrtc
 
-> ✅ **Stable**  
-> This library is ready for production use.
+> 🚧 **Work In Progress**  
+> This library is not yet ready for use and is unreleased
 
 > 📺 Part of the [**Astronaut Labs Broadcast Suite**](https://github.com/astronautlabs/broadcast)
 
@@ -21,93 +21,100 @@ You can also [build from source](docs/build-from-source.md).
 
 # Supported Platforms
 
-The following platforms are confirmed to work with `@astronautlabs/webrtc` and have prebuilt binaries available. Since we target [N-API version 3](https://nodejs.org/api/n-api.html), there may be additional platforms supported that are not listed here. If your platform is not supported, you may still be able to [build from source](docs/build-from-source.md).
+We intend to officially support
+- the latest 3 stable versions of Node.js 
+- the latest 3 stable releases of Electron 
 
+For the following platforms:
+- Linux
+- macOS
+- Windows
+
+On the following architectures:
+- x64
+- arm64
+- armv7l 
+
+Build validation is not yet in place for all of these platforms. 
+
+The following platforms are confirmed to work with `@astronautlabs/webrtc`. Some may have prebuilt binaries available. Since we target [N-API version 3](https://nodejs.org/api/n-api.html), there may be additional platforms supported that are not listed here. If your platform is not supported, you may still be able to [build from source](docs/build-from-source.md).
+
+The table below maps our support intentions to which configurations have been validated.
 <table>
   <thead>
     <tr>
-      <td colspan="2" rowspan="2"></td>
-      <th colspan="3">Linux</th>
-      <th>macOS</th>
-      <th>Windows</th>
+      <td style="text-align: center;" colspan="2" rowspan="2"></td>
+      <th style="text-align: center;" colspan="3">Linux</th>
+      <th style="text-align: center;">macOS</th>
+      <th style="text-align: center;">Windows</th>
     </tr>
     <tr>
-      <th>armv7l</th>
-      <th>arm64</th>
-      <th>x64</th>
-      <th>x64</th>
-      <th>x64</th>
+      <th style="text-align: center;">armv7l</th>
+      <th style="text-align: center;">arm64</th>
+      <th style="text-align: center;">x64</th>
+      <th style="text-align: center;">x64</th>
+      <th style="text-align: center;">x64</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th rowspan="6">Node</th>
-      <th>8</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>10</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>11</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>12</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>13</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
+      <th rowspan="3">Node.js</th>
       <th>14</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th rowspan="2">Electron</th>
-      <th>4</th>
-        <td align="center"></td>
-        <td align="center"></td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
       <td align="center">✓</td>
     </tr>
     <tr>
-      <th>5</th>
-        <td align="center"></td>
-        <td align="center"></td>
-        <td align="center">✓</td>
+      <th>16</th>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
       <td align="center">✓</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
       <td align="center">✓</td>
+    </tr>
+    <tr>
+      <th rowspan="3">Electron</th>
+      <th>18</th>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
+      <td align="center"></td>
     </tr>
   </tbody>
 </table>
+
+## Platform-specific details
+
+### Linux
+
+Other libwebrtc bindings use Google's in-tree `libc++` when targetting Linux. Due to compatibility issues, and to reduce the need for multiple C++ standard libraries to be loaded within a single application when using `@/webrtc` in concert with other native add-ons, we have opted to use the system's `libstdc++` instead. This does mean that you will need a compatible version of `libstdc++` installed when you use the prebuilt versions of the library. If the prebuilt versions give you runtime link errors related to missing versions of `libstdc++`, either install the correct version or use `SKIP_DOWNLOAD=true` when running `npm install` to build from source instead.
 
 # Examples
 
