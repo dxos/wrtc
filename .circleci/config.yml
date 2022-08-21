@@ -150,7 +150,7 @@ jobs:
               qemu-aarch64 -L ~/node-webrtc/build/external/libwebrtc/download/src/build/linux/debian_sid_arm64-sysroot ~/node-$NODE_VERSION-linux-arm64/bin/node test/create-offer.js
             else
               # NOTE(mroberts): First run C++ tests, if any.
-              node dist/nodejs/test/cpp.test.js
+              node dist/nodejs/test/cpp-test.js
 
               export CHECK_REFLEXIVE=true
               npm test
