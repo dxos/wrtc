@@ -11,8 +11,8 @@ const dnsLookup = q.denodeify(dns.lookup);
 const wptDir = path.resolve(__dirname, 'tests');
 
 const configPaths = {
-  default: path.resolve(__dirname, 'wpt-config.json'),
-  toUpstream: path.resolve(__dirname, 'tuwpt-config.json')
+  default: path.resolve(__dirname, '..', '..', '..', '..', 'lib', 'nodejs', 'test', 'web-platform-tests', 'wpt-config.json'),
+  toUpstream: path.resolve(__dirname, '..', '..', '..', '..', 'lib', 'nodejs', 'test', 'web-platform-tests', 'tuwpt-config.json')
 };
 
 const configs = {
