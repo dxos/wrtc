@@ -6,7 +6,7 @@ import { specify } from 'mocha-sugar-free';
 import { inBrowserContext } from './util';
 import { JSDOM, VirtualConsole } from 'jsdom/lib/api.js';
 import ResourceLoader from 'jsdom/lib/jsdom/browser/resources/resource-loader';
-import wrtc from '../../../..';
+import * as wrtc from '../..';
 import fetch from 'node-fetch';
 
 const reporterPathname = '/resources/testharnessreport.js';
