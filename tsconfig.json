@@ -8,8 +8,7 @@
         "module": "CommonJS",
         "moduleResolution": "Node",
         "esModuleInterop": true,
-        "outDir": "dist",
-        "lib": ["WebWorker", "DOM"]
+        "outDir": "dist"
     },
     "include": [
         "lib/**/*.ts"

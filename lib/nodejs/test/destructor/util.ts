@@ -8,6 +8,7 @@ import { createHook } from 'async_hooks';
  * @property {Promise<T>} promise
  */
 
+declare var WorkerGlobalScope;
 /**
  * Create a {@link Deferred}.
  * @returns {Deferred<T>}
