@@ -50,15 +50,23 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   }
 
   std::cout << "[PCF] Creating signaling thread..." << std::endl;
-  _signalingThread = rtc::Thread::Create();
-  assert(_signalingThread);
+  
+  std::unique_ptr<rtc::Thread> signalThread = rtc::Thread::Create();
+  assert(signalThread);
 
-  result = _signalingThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
+  std::cout << "[PCF] Signaling thread location: " << signalThread.get() << std::endl;
+  std::cout << "[PCF] Setting name for signaling thread..." << std::endl;
+  result = signalThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
   assert(result);
 
-  result = _signalingThread->Start();
+  std::cout << "[PCF] Starting signaling thread..." << std::endl;
+  result = signalThread->Start();
   assert(result);
-    
+  
+  std::cout << "[PCF] IT WORKED..." << std::endl;
+
+  this->_signalingThread = std::move(signalThread);
+  
   std::cout << "[PCF] Creating audio-layer..." << std::endl;
   // TODO(mroberts): Read `audioLayer` from some PeerConnectionFactoryOptions?
   auto audioLayer = MakeNothing<webrtc::AudioDeviceModule::AudioLayer>();
