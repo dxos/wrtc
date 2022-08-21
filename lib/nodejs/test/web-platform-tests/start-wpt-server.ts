@@ -42,6 +42,7 @@ export default ({ toUpstream = false } = {}) => {
 
       return new Promise((resolve, reject) => {
         python.on('error', e => {
+          console.error(`Error starting python server process: ${e.message}`);
           reject(new Error(`Error starting python server process: ${e.message}`));
         });
 
