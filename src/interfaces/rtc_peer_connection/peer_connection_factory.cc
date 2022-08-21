@@ -49,29 +49,20 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
     return;
   }
 
-  std::cout << "[PCF] Creating signaling thread..." << std::endl;
-  
   std::unique_ptr<rtc::Thread> signalThread = rtc::Thread::Create();
   assert(signalThread);
 
-  std::cout << "[PCF] Signaling thread location: " << signalThread.get() << std::endl;
-  std::cout << "[PCF] Setting name for signaling thread..." << std::endl;
   result = signalThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
   assert(result);
 
-  std::cout << "[PCF] Starting signaling thread..." << std::endl;
   result = signalThread->Start();
   assert(result);
-  
-  std::cout << "[PCF] IT WORKED..." << std::endl;
 
   this->_signalingThread = std::move(signalThread);
   
-  std::cout << "[PCF] Creating audio-layer..." << std::endl;
   // TODO(mroberts): Read `audioLayer` from some PeerConnectionFactoryOptions?
   auto audioLayer = MakeNothing<webrtc::AudioDeviceModule::AudioLayer>();
 
-  std::cout << "[PCF] Creating worker thread..." << std::endl;
   _workerThread = rtc::Thread::CreateWithSocketServer();
   assert(_workerThread);
 
@@ -81,7 +72,6 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   result = _workerThread->Start();
   assert(result);
 
-  std::cout << "[PCF] Creating audio device module..." << std::endl;
   _audioDeviceModule = _workerThread->Invoke<rtc::scoped_refptr<webrtc::AudioDeviceModule>>(RTC_FROM_HERE, [audioLayer]() {
     return audioLayer.Map([](auto audioLayer) {
       // TODO(mroberts): I'm just trying to get this to compile right now.
@@ -95,7 +85,6 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
     });
   });
 
-  std::cout << "[PCF] Creating PeerConnectionFactory..." << std::endl;
   _factory = webrtc::CreatePeerConnectionFactory(
           _workerThread.get(),
           _workerThread.get(),
@@ -113,15 +102,11 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   options.network_ignore_mask = 0;
   _factory->SetOptions(options);
 
-  std::cout << "[PCF] Creating NetworkManager..." << std::endl;
   _networkManager = std::unique_ptr<rtc::NetworkManager>(new rtc::BasicNetworkManager());
   assert(_networkManager != nullptr);
 
-  std::cout << "[PCF] Creating SocketFactory..." << std::endl;
   _socketFactory = std::unique_ptr<rtc::PacketSocketFactory>(new rtc::BasicPacketSocketFactory(_workerThread.get()));
   assert(_socketFactory != nullptr);
-    
-  std::cout << "[PCF] Done." << std::endl;
 }
 
 PeerConnectionFactory::~PeerConnectionFactory() {
