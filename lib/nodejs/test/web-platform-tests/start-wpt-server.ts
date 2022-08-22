@@ -44,8 +44,8 @@ export default async ({ toUpstream = false } = {}) => {
 
   let pythonPath = await which('python3');
 
-  console.log(`Starting WPT server: ${pythonPath} ${args.map(x => `'${x}'`).join(' ')}`);
-  console.log(`    in directory ${wptDir}`);
+  console.log(`    (***) Starting WPT server: ${pythonPath} ${args.map(x => `'${x}'`).join(' ')}`);
+  console.log(`          in directory: ${wptDir}`);
   const python = childProcess.spawn(pythonPath, args, {
     cwd: wptDir,
     stdio: 'inherit'
@@ -57,10 +57,11 @@ export default async ({ toUpstream = false } = {}) => {
       reject(new Error(`Error starting python server process: ${e.message}`));
     });
 
-    await q.delay(2000);
+    await q.delay(1000);
     resolve(pollForServer(urlPrefix));
 
-    process.on('exit', () => {
+    process.on('exit', (code: number, signal) => {
+      console.log(`WPT server exited with code ${code}`);
       // Python doesn't register a default handler for SIGTERM and it doesn't run __exit__() methods of context
       // managers when it gets that signal. Using SIGINT avoids this problem.
       python.kill('SIGINT');
@@ -68,15 +69,17 @@ export default async ({ toUpstream = false } = {}) => {
   });
 };
 
-async function pollForServer(url) {
+async function pollForServer(url, delayed = 0) {
   try {
     await requestHead(url);
   } catch (err) {
-    console.log(`WPT server at ${url} is not up yet (${err.message}); trying again`);
+    if (delayed > 10000) {
+      console.log(`    (???) WPT server at ${url} is not up yet (${err.message}); trying again`);
+    }
     await q.delay(500);
-    return pollForServer(url);
+    return pollForServer(url, delayed + 500);
   }
 
-  console.log(`WPT server at ${url} is up!`);
+  console.log(`    (***) WPT server at ${url} is up!`);
   return url;
 }

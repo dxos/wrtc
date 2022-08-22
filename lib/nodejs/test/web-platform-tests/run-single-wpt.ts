@@ -1,4 +1,3 @@
-'use strict';
 /* eslint-disable no-console */
 import path from 'path';
 import { URL } from 'url';
@@ -11,32 +10,11 @@ import fetch from 'node-fetch';
 
 const reporterPathname = '/resources/testharnessreport.js';
 
-module.exports = urlPrefixFactory => {
-  if (inBrowserContext()) {
-    return () => {
-      // TODO: browser support for running WPT
-    };
-  }
-
-  return (testPath, title = testPath, expectFail) => {
-    specify({
-      title,
-      expectPromise: true,
-      // WPT also takes care of timeouts (maximum 60 seconds), this is an extra failsafe:
-      timeout: 70000,
-      slow: 10000,
-      skipIfBrowser: true,
-      fn() {
-        return createJSDOM(urlPrefixFactory(), testPath, expectFail);
-      }
-    });
-  };
-};
-
 class CustomResourceLoader extends ResourceLoader {
   constructor() {
     super({ strictSSL: false });
   }
+
   fetch(urlString, options) {
     const url = new URL(urlString);
 
@@ -59,10 +37,15 @@ class CustomResourceLoader extends ResourceLoader {
   }
 }
 
-function createJSDOM(urlPrefix, testPath, expectFail) {
-  const unhandledExceptions = [];
-  const doneErrors = [];
+interface Result {
+  status: number; // 0 is success
+  name: string;
+  message: string;
+  stack: string;
+}
 
+export async function runSingleWPT(urlPrefix, testPath, expectFail) {
+  const unhandledExceptions = [];
   let allowUnhandledExceptions = false;
 
   const virtualConsole = new VirtualConsole().sendTo(console, { omitJSDOMErrors: true });
@@ -73,92 +56,125 @@ function createJSDOM(urlPrefix, testPath, expectFail) {
       // Some failing tests make a lot of noise.
       // There's no need to log these messages
       // for errors we're already aware of.
-      if (!expectFail) {
+      //if (!expectFail) {
+        console.error(`    (!!!) Uncaught exception: ${e.detail.message}:`);
         console.error(e.detail.stack);
-      }
+      //}
     }
   });
 
-  return JSDOM.fromURL(urlPrefix + testPath, {
+  let dom = await JSDOM.fromURL(urlPrefix + testPath, {
     runScripts: 'dangerously',
     virtualConsole,
     resources: new CustomResourceLoader(),
     pretendToBeVisual: true,
     storageQuota: 100000 // Filling the default quota takes about a minute between two WPTs
-  })
-    .then(dom => {
-      const { window } = dom;
+  });
+  const { window } = dom;
 
-      // NOTE(mroberts): Here is where we inject node-webrtc.
-      Object.assign(window, wrtc);
+  // NOTE(mroberts): Here is where we inject node-webrtc.
+  Object.assign(window, wrtc);
+  window.TypeError = TypeError;
 
-      window.navigator.mediaDevices = Object.assign({}, window.navigator.mediaDevices, {
-        getUserMedia: wrtc.getUserMedia
-      });
+  window.navigator.mediaDevices = Object.assign({}, window.navigator.mediaDevices, {
+    getUserMedia: wrtc.getUserMedia
+  });
 
-      window.fetch = function safeFetch() {
-        const args = [].slice.call(arguments);
-        const url = args[0];
-        try {
-          new window.URL(url);
-        } catch (error) {
-          args[0] = window.location.protocol + '//' + window.location.host + url;
+  window.fetch = function safeFetch() {
+    const args = [].slice.call(arguments);
+    const url = args[0];
+    try {
+      new window.URL(url);
+    } catch (error) {
+      args[0] = window.location.protocol + '//' + window.location.host + url;
+    }
+    return fetch.apply(null, args);
+  };
+
+  await new Promise<void>((resolve, reject) => {
+    const results: Result[] = [];
+
+    window.shimTest = () => {
+      const oldSetup = window.setup;
+      window.setup = options => {
+        if (options.allow_uncaught_exception) {
+          allowUnhandledExceptions = true;
         }
-        return fetch.apply(null, args);
+        oldSetup(options);
       };
 
-      return new Promise<void>((resolve, reject) => {
-        const errors = [];
+      let completionCallback;
+      let internalTimeout = setTimeout(() => {
+        // It shouldn't be possible to hit this, but some tests are broken in a way that 
+        // prevents the completion callback.
+        console.log(`    (***) Test timed out without harness indicating timeout (bug in test)`);
+        completionCallback([], { status: 2 });
+      }, 70000);
 
-        window.shimTest = () => {
-          const oldSetup = window.setup;
-          window.setup = options => {
-            if (options.allow_uncaught_exception) {
-              allowUnhandledExceptions = true;
-            }
-            oldSetup(options);
-          };
+      window.add_result_callback(test => {
+        console.log(`    (***) ${summarizeResult(test)}`);
+        results.push(test);
+      });
 
+      window.add_completion_callback(completionCallback = (_, harnessStatus) => {
+        clearTimeout(internalTimeout);
 
-          window.add_result_callback(test => {
-            if (test.status === 1) {
-              errors.push(`Failed in "${test.name}": \n${test.message}\n\n${test.stack}`);
-            } else if (test.status === 2) {
-              errors.push(`Timeout in "${test.name}": \n${test.message}\n\n${test.stack}`);
-            } else if (test.status === 3) {
-              errors.push(`Uncompleted test "${test.name}": \n${test.message}\n\n${test.stack}`);
-            }
+        // This needs to be delayed since some tests do things even after calling done().
+        process.nextTick(() => {
+          window.close();
+        });
+
+        if (harnessStatus.status === 2) {
+          console.log(`    (***) Test harness timed out`);
+          results.push({
+            name: `Boilerplate`,
+            message: `Test harness should not timeout`,
+            stack: ``,
+            status: 2
           });
+        } else {
+          console.log(`    (***) Test harness completed`);
+        }
 
-          window.add_completion_callback((tests, harnessStatus) => {
-            // This needs to be delayed since some tests do things even after calling done().
-            process.nextTick(() => {
-              window.close();
-            });
+        for (let unhandledException of unhandledExceptions) {
+          results.push({
+            name: `Unhandled exception`,
+            message: unhandledException.message,
+            stack: unhandledException.stack,
+            status: 1
+          });
+        }
 
-            if (harnessStatus.status === 2) {
-              errors.push(new Error(`test harness should not timeout: ${testPath}`));
-            }
+        let errors = results.filter(x => x.status !== 0);
 
-            errors.push(...doneErrors);
-            errors.push(...unhandledExceptions);
-
-            if (errors.length === 0 && expectFail) {
-              reject(new Error(`
+        if (errors.length === 0 && expectFail) {
+          reject(new Error(`
             Hey, did you fix a bug? This test used to be failing, but during
             this run there were no errors. If you have fixed the issue covered
             by this test, you can edit the "to-run.yaml" file and remove the line
             containing this test. Thanks!
-            `));
-            } else if (errors.length === 1 && !expectFail) {
-              reject(new Error(errors[0]));
-            } else if (errors.length && !expectFail) {
-              reject(new Error(`${errors.length} errors in test:\n\n${errors.join('\n')}`));
-            } else {
-              resolve();
-            }
-          });
-        };
+        `));
+        } else if (errors.length > 0 && !expectFail) {
+          reject(new Error(
+            `Only ${results.length - errors.length}/${results.length} assertions succeeded:\n\n` 
+            + `${results.map(r => `               ${summarizeResult(r)}`).join('\n')}`
+          ));
+        } else {
+          resolve();
+        }
       });
-    });
+    };
+  });
+}
+
+function summarizeResult(result: Result) {
+  if (result.status === 0) {
+    return `✅ ${result.name}`;
+  } else if (result.status === 1) {
+    return `❌ ${result.name}: ${result.message}`;
+  } else if (result.status === 2) {
+    return `⌛ ${result.name}: ${result.message}`;
+  } else if (result.status === 3) {
+    return `❔ ${result.name}: ${result.message}`;
+  }
 }
