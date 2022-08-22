@@ -1,11 +1,24 @@
-'use strict';
 import path from 'path';
 import fs from 'fs';
 import jsYAML from 'js-yaml';
 import { Minimatch } from 'minimatch';
-import { describe, specify, before } from 'mocha-sugar-free';
 import { readManifest, getPossibleTestFilePaths, stripPrefix } from './wpt-manifest-utils.js';
 import startWPTServer from './start-wpt-server.js';
+import { runSingleWPT } from './run-single-wpt';
+import { ConsoleReporter, describe, it, suite, TestFunction } from 'razmin';
+
+/**
+ * If you wish to work on specific WPT tests, you can add filters for them here.
+ * If any test description matches any of the fragments in this filter list, then 
+ * only those tests will be run. If no filters are specified in this list, all tests
+ * will run.
+ */
+const ONLY = [
+  //`iceTransportPolicy.html`
+];
+
+// The WPT suite routinely ignores promise rejections.
+process.on("unhandledRejection", () => {});
 
 const validReasons = new Set([
   'fail',
@@ -33,40 +46,75 @@ const minimatchers = new Map();
 checkToRun();
 
 let wptServerURL;
-const runSingleWPT = require(path.join(__dirname, 'run-single-wpt.js'))(() => wptServerURL);
-before({ timeout: 30 * 1000 }, () => {
-  return startWPTServer({ toUpstream: false }).then(url => {
-    wptServerURL = url;
-  });
-});
+//const runSingleWPT = wptRunner(() => wptServerURL);
 
-describe('web-platform-tests', () => {
-  for (const toRunDoc of toRunDocs) {
-    describe(toRunDoc.DIR, () => {
-      for (const testFilePath of possibleTestFilePaths) {
-        if (testFilePath.startsWith(toRunDoc.DIR + '/')) {
-          const matchingPattern = expectationsInDoc(toRunDoc).find(pattern => {
-            const matcher = minimatchers.get(toRunDoc.DIR + '/' + pattern);
-            return matcher.match(testFilePath);
-          });
+let serverPromise;
 
-          const testFile = stripPrefix(testFilePath, toRunDoc.DIR + '/');
-          const reason = matchingPattern && toRunDoc[matchingPattern][0];
-          const shouldSkip = ['fail-slow', 'timeout', 'flaky', 'mutates-globals'].includes(reason);
-          const expectFail = (reason === 'fail') ||
-                             (reason === 'needs-node10' && !hasNode10) ||
-                             (reason === 'needs-node11' && !hasNode11);
+async function startServer() {
+  if (!serverPromise) {
+    serverPromise = startWPTServer({ toUpstream: false }).then(url => {
+      wptServerURL = url;
+    });
+  }
 
-          if (matchingPattern && shouldSkip) {
-            specify.skip(`[${reason}] ${testFile}`);
-          } else if (expectFail) {
-            runSingleWPT(testFilePath, `[expected fail] ${testFile}`, expectFail);
-          } else {
-            runSingleWPT(testFilePath, testFile, expectFail);
+  return serverPromise;
+}
+
+suite(() => {
+  describe('web-platform-tests', () => {
+    for (const toRunDoc of toRunDocs) {
+      describe(`: ${toRunDoc.DIR}`, it => {
+        for (const testFilePath of possibleTestFilePaths) {
+          if (testFilePath.startsWith(toRunDoc.DIR + '/')) {
+            const matchingPattern = expectationsInDoc(toRunDoc).find(pattern => {
+              const matcher = minimatchers.get(toRunDoc.DIR + '/' + pattern);
+              return matcher.match(testFilePath);
+            });
+
+            const testFile = stripPrefix(testFilePath, toRunDoc.DIR + '/');
+            const reason = matchingPattern && toRunDoc[matchingPattern][0];
+            const shouldSkip = ['fail-slow', 'timeout', 'flaky', 'mutates-globals'].includes(reason);
+            const expectFail = (reason === 'fail') ||
+                              (reason === 'needs-node10' && !hasNode10) ||
+                              (reason === 'needs-node11' && !hasNode11);
+
+            let title = `${testFile}`;
+            if (expectFail)
+              title = `[expected fail] ${title}`;
+            
+            let runTest: (testDescription: string, func: TestFunction) => void = it;
+            
+            if (matchingPattern && shouldSkip) {
+              runTest = it.skip;
+              title = `[${reason}] ${title}`;
+            }
+
+            if (ONLY.length > 0 && ONLY.some(fragment => title.includes(fragment))) {
+              runTest = it.only;
+            }
+
+            title = `: ${title}`;
+
+            if (expectFail)
+              continue;
+
+            runTest(title, async () => {
+              await startServer();
+              await runSingleWPT(wptServerURL, testFilePath, expectFail);
+            });
           }
         }
-      }
-    });
+      });
+    }
+  });
+}, { 
+  execution: {
+    order: 'default',
+    timeout: 120000, // WPT times out at 60s, our own WPT harness times out at 75s
+    verbose: true
+  },
+  reporting: {
+    slowThreshold: 10000
   }
 });
 

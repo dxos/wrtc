@@ -4,13 +4,13 @@
   "ws_doc_root": null,
   "server_host": null,
   "ports": {
-    "http": [9000, "auto"],
-    "https": [9443],
-    "ws": ["auto"],
-    "wss": ["auto"]
+    "http": [8000, "auto"],
+    "https": [8443, "auto"],
+    "ws": [],
+    "wss": []
   },
   "check_subdomains": true,
-  "log_level": "info",
+  "log_level": "warning",
   "bind_address": true,
   "ssl": {
     "type": "pregenerated",

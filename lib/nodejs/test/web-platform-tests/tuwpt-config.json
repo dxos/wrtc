@@ -5,7 +5,7 @@
   "server_host": null,
   "ports": {
     "http": [10000, "auto"],
-    "https": [10443],
+    "https": [10443, "auto"],
     "ws": ["auto"],
     "wss": ["auto"]
   },
