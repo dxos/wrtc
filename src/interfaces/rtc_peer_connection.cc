@@ -360,7 +360,7 @@ namespace node_webrtc {
 
 	Napi::Value RTCPeerConnection::RemoveTrack(const Napi::CallbackInfo& info) {
 		auto env = info.Env();
-		if (!factory || !_jinglePeerConnection) {
+		if (!_factory || !_jinglePeerConnection) {
 			Napi::Error(env, ErrorFactory::CreateInvalidStateError(env, "Cannot removeTrack; RTCPeerConnection is closed"))
 				.ThrowAsJavaScriptException();
 			return env.Undefined();
