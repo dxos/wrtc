@@ -81,6 +81,10 @@ namespace node_webrtc {
 	private:
 		void processStateChangesPlanB();
 		void processStateChangesUnifiedPlan();
+		inline bool isClosed() {
+			return !_factory || !_jinglePeerConnection;
+		}
+		
 		inline bool isPlanB() { 
 			return _jinglePeerConnection 
 				? (_jinglePeerConnection->GetConfiguration().sdp_semantics == webrtc::SdpSemantics::kPlanB) 

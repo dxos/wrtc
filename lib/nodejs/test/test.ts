@@ -1,3 +1,4 @@
+import 'segfault-handler';
 import { describe, suite } from "razmin";
 
 console.log(`****************`);
