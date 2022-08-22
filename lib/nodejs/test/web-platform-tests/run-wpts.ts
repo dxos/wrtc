@@ -60,63 +60,75 @@ async function startServer() {
   return serverPromise;
 }
 
-suite(() => {
-  describe('web-platform-tests', () => {
-    for (const toRunDoc of toRunDocs) {
-      describe(`: ${toRunDoc.DIR}`, it => {
-        for (const testFilePath of possibleTestFilePaths) {
-          if (testFilePath.startsWith(toRunDoc.DIR + '/')) {
-            const matchingPattern = expectationsInDoc(toRunDoc).find(pattern => {
-              const matcher = minimatchers.get(toRunDoc.DIR + '/' + pattern);
-              return matcher.match(testFilePath);
-            });
+if (process.argv.includes('--native-debug')) {
+  console.log(`Attach native debugger now.`);
+  console.log(`Starting in 20 seconds...`);
+  setTimeout(() => defineSuite(), 20*1000);
+} else {
+  defineSuite();
+}
 
-            const testFile = stripPrefix(testFilePath, toRunDoc.DIR + '/');
-            const reason = matchingPattern && toRunDoc[matchingPattern][0];
-            const shouldSkip = ['fail-slow', 'timeout', 'flaky', 'mutates-globals'].includes(reason);
-            const expectFail = (reason === 'fail') ||
-                              (reason === 'needs-node10' && !hasNode10) ||
-                              (reason === 'needs-node11' && !hasNode11);
+function defineSuite() {
+  suite(() => {
+    describe('web-platform-tests', () => {
+      for (const toRunDoc of toRunDocs) {
+        describe(`: ${toRunDoc.DIR}`, it => {
+          for (const testFilePath of possibleTestFilePaths) {
+            if (testFilePath.startsWith(toRunDoc.DIR + '/')) {
+              const matchingPattern = expectationsInDoc(toRunDoc).find(pattern => {
+                const matcher = minimatchers.get(toRunDoc.DIR + '/' + pattern);
+                return matcher.match(testFilePath);
+              });
 
-            let title = `${testFile}`;
-            if (expectFail)
-              title = `[expected fail] ${title}`;
-            
-            let runTest: (testDescription: string, func: TestFunction) => void = it;
-            
-            if (matchingPattern && shouldSkip) {
-              runTest = it.skip;
-              title = `[${reason}] ${title}`;
+              const testFile = stripPrefix(testFilePath, toRunDoc.DIR + '/');
+              const reason = matchingPattern && toRunDoc[matchingPattern][0];
+              const shouldSkip = ['fail-slow', 'timeout', 'flaky', 'mutates-globals'].includes(reason);
+              const expectFail = (reason === 'fail') ||
+                                (reason === 'needs-node10' && !hasNode10) ||
+                                (reason === 'needs-node11' && !hasNode11);
+
+              let title = `${testFile}`;
+              if (expectFail)
+                title = `[expected fail] ${title}`;
+              
+              let runTest: (testDescription: string, func: TestFunction) => void = it;
+              
+              if (matchingPattern && shouldSkip) {
+                runTest = it.skip;
+                title = `[${reason}] ${title}`;
+              }
+
+              if (ONLY.length > 0 && ONLY.some(fragment => title.includes(fragment))) {
+                runTest = it.only;
+              }
+
+              title = `: ${title}`;
+
+              if (expectFail)
+                continue;
+
+              runTest(title, async () => {
+                await startServer();
+                await runSingleWPT(wptServerURL, testFilePath, expectFail);
+              });
             }
-
-            if (ONLY.length > 0 && ONLY.some(fragment => title.includes(fragment))) {
-              runTest = it.only;
-            }
-
-            title = `: ${title}`;
-
-            if (expectFail)
-              continue;
-
-            runTest(title, async () => {
-              await startServer();
-              await runSingleWPT(wptServerURL, testFilePath, expectFail);
-            });
           }
-        }
-      });
+        });
+      }
+    });
+  }, { 
+}, { 
+  }, { 
+    execution: {
+      order: 'default',
+      timeout: 120000, // WPT times out at 60s, our own WPT harness times out at 75s
+      verbose: true
+    },
+    reporting: {
+      slowThreshold: 10000
     }
   });
-}, { 
-  execution: {
-    order: 'default',
-    timeout: 120000, // WPT times out at 60s, our own WPT harness times out at 75s
-    verbose: true
-  },
-  reporting: {
-    slowThreshold: 10000
-  }
-});
+}
 
 function checkToRun() {
   let lastDir = '';
