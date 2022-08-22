@@ -238,7 +238,7 @@ jobs:
 
             if [[ "$(uname)" == Linux ]]; then
               sudo apt install --reinstall python-pkg-resources
-              pip install --upgrade requests
+              #pip install --upgrade requests
             fi
 
             npm run wpt:init
