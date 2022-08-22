@@ -324,14 +324,24 @@ namespace node_webrtc {
 		CONVERT_ARGS_OR_THROW_AND_RETURN_NAPI(info, args, std::tuple<Either<cricket::MediaType COMMA MediaStreamTrack*> COMMA Maybe<webrtc::RtpTransceiverInit>>)
 			Either<cricket::MediaType, MediaStreamTrack*> kindOrTrack = std::get<0>(args);
 		Maybe<webrtc::RtpTransceiverInit> maybeInit = std::get<1>(args);
+		webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> result;
+		if (kindOrTrack.IsLeft()) {
+			if (maybeInit.IsNothing()) {
+				result = _jinglePeerConnection->AddTransceiver(kindOrTrack.UnsafeFromLeft());
+			} else {
+				result = _jinglePeerConnection->AddTransceiver(kindOrTrack.UnsafeFromLeft(), maybeInit.UnsafeFromJust());
+			}
+		} else {
+			auto rtcTrack = kindOrTrack.UnsafeFromRight()->track();
+			auto track = MediaStreamTrack::wrap()->GetOrCreate(_factory, rtcTrack);
+			_tracks[rtcTrack->id()] = track;
 
-		auto result = kindOrTrack.IsLeft()
-			? maybeInit.IsNothing()
-			? _jinglePeerConnection->AddTransceiver(kindOrTrack.UnsafeFromLeft())
-			: _jinglePeerConnection->AddTransceiver(kindOrTrack.UnsafeFromLeft(), maybeInit.UnsafeFromJust())
-			: maybeInit.IsNothing()
-			? _jinglePeerConnection->AddTransceiver(kindOrTrack.UnsafeFromRight()->track())
-			: _jinglePeerConnection->AddTransceiver(kindOrTrack.UnsafeFromRight()->track(), maybeInit.UnsafeFromJust());
+			if (maybeInit.IsNothing()) {
+				result = _jinglePeerConnection->AddTransceiver(rtcTrack);
+			} else {
+				result = _jinglePeerConnection->AddTransceiver(rtcTrack, maybeInit.UnsafeFromJust());
+			}
+		}
 
 		if (!result.ok()) {
 			CONVERT_OR_THROW_AND_RETURN_NAPI(env, &result.error(), error, Napi::Value)
