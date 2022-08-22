@@ -106,6 +106,7 @@
     "wpt:init": "git submodule update --init --recursive",
     "wpt:reset": "rimraf ./web-platform-tests && npm run wpt:init",
     "wpt:test": "npm run build && node dist/nodejs/test/web-platform-tests/run-wpts.js --exit",
+    "wpt:test:gdb": "npm run build && cd build/external/libwebrtc/build/Debug && gdb --args node ../../../../../dist/nodejs/test/web-platform-tests/run-wpts.js",
     "wpt:update": "git submodule update --recursive --remote --force && cd web-platform-tests && python wpt.py manifest --path ../lib/nodejs/test/web-platform-tests/wpt-manifest.json"
   }
 }
