@@ -1026,12 +1026,13 @@ namespace node_webrtc {
 	void node_webrtc::RTCPeerConnection::onSetDescriptionComplete()
 	{
 		Dispatch(CreateCallback<RTCPeerConnection>([this]() {
-			if (isPlanB()) {
+			if (!_jinglePeerConnection)
+				return;
+
+			if (isPlanB())
 				processStateChangesPlanB();
-			}
-			else {
+			else
 				processStateChangesUnifiedPlan();
-			}
 		}));
 	}
 

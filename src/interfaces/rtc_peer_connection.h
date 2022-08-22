@@ -81,8 +81,17 @@ namespace node_webrtc {
 	private:
 		void processStateChangesPlanB();
 		void processStateChangesUnifiedPlan();
-		inline bool isPlanB() { return (_jinglePeerConnection->GetConfiguration().sdp_semantics == webrtc::SdpSemantics::kPlanB); }
-		inline bool isUnifiedPlan() { return (_jinglePeerConnection->GetConfiguration().sdp_semantics == webrtc::SdpSemantics::kUnifiedPlan); }
+		inline bool isPlanB() { 
+			return _jinglePeerConnection 
+				? (_jinglePeerConnection->GetConfiguration().sdp_semantics == webrtc::SdpSemantics::kPlanB) 
+				: false; 
+		}
+
+		inline bool isUnifiedPlan() { 
+			return _jinglePeerConnection
+				? (_jinglePeerConnection->GetConfiguration().sdp_semantics == webrtc::SdpSemantics::kUnifiedPlan)
+				: false;
+		}
 
 		Napi::Value AddTrack(const Napi::CallbackInfo&);
 		Napi::Value AddTransceiver(const Napi::CallbackInfo&);
