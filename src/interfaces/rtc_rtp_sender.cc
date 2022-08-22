@@ -120,8 +120,8 @@ namespace node_webrtc {
 		}
 
 		if (pc->isClosed()) {
-			Napi::TypeError::New(info.Env(), "The related RTCPeerConnection has been closed.").ThrowAsJavaScriptException();
-			return;
+			Reject(deferred, Napi::TypeError::New(info.Env(), "The related RTCPeerConnection has been closed.").Value().As<Napi::Value>());
+			return deferred.Promise();
 		}
 		
 		auto result = pc->getUnderlying(this)->SetTrack(track);
