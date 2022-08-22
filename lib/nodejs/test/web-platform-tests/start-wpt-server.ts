@@ -42,11 +42,11 @@ export default async ({ toUpstream = false } = {}) => {
   const configArg = path.relative(path.resolve(wptDir), configPath);
   const args = ['./wpt.py', 'serve', '--config', configArg];
 
-  let pythonPath = await which('python3');
+  //let pythonPath = await which('python3');
 
-  console.log(`    (***) Starting WPT server: ${pythonPath} ${args.map(x => `'${x}'`).join(' ')}`);
+  console.log(`    (***) Starting WPT server: python3 ${args.map(x => `'${x}'`).join(' ')}`);
   console.log(`          in directory: ${wptDir}`);
-  const python = childProcess.spawn(pythonPath, args, {
+  const python = childProcess.spawn('python3', args, {
     cwd: wptDir,
     stdio: 'inherit'
   });
