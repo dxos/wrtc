@@ -14,7 +14,7 @@ import { ConsoleReporter, describe, it, suite, TestFunction } from 'razmin';
  * will run.
  */
 const ONLY = [
-  //`iceTransportPolicy.html`
+  `RTCPeerConnection-addTrack.https.html`
 ];
 
 // The WPT suite routinely ignores promise rejections.
@@ -116,8 +116,6 @@ function defineSuite() {
         });
       }
     });
-  }, { 
-}, { 
   }, { 
     execution: {
       order: 'default',
