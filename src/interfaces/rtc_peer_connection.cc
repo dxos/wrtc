@@ -231,6 +231,9 @@ namespace node_webrtc {
 
 	void RTCPeerConnection::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterface> rtpTransceiver) {
 		Dispatch(CreateCallback<RTCPeerConnection>([this, rtpTransceiver]() {
+			if (!_factory || !_jinglePeerConnection)
+				return;
+			
 			auto receiver = rtpTransceiver->receiver();
 			auto wrappedTransceiver = createOrUpdateTransceiver(rtpTransceiver);
 			
@@ -261,7 +264,7 @@ namespace node_webrtc {
 
 	Napi::Value RTCPeerConnection::AddTrack(const Napi::CallbackInfo& info) {
 		auto env = info.Env();
-		if (!_jinglePeerConnection) {
+		if (!_factory || !_jinglePeerConnection) {
 			Napi::Error(env, ErrorFactory::CreateInvalidStateError(env, "Cannot addTrack; RTCPeerConnection is closed")).ThrowAsJavaScriptException();
 			return env.Undefined();
 		}
@@ -313,7 +316,7 @@ namespace node_webrtc {
 	Napi::Value RTCPeerConnection::AddTransceiver(const Napi::CallbackInfo& info) {
 		auto env = info.Env();
 
-		if (!_jinglePeerConnection) {
+		if (!_factory || !_jinglePeerConnection) {
 			Napi::Error::New(env, "Cannot addTransceiver; RTCPeerConnection is closed").ThrowAsJavaScriptException();
 			return env.Undefined();
 		} else if (_jinglePeerConnection->GetConfiguration().sdp_semantics != webrtc::SdpSemantics::kUnifiedPlan) {
@@ -357,7 +360,7 @@ namespace node_webrtc {
 
 	Napi::Value RTCPeerConnection::RemoveTrack(const Napi::CallbackInfo& info) {
 		auto env = info.Env();
-		if (!_jinglePeerConnection) {
+		if (!factory || !_jinglePeerConnection) {
 			Napi::Error(env, ErrorFactory::CreateInvalidStateError(env, "Cannot removeTrack; RTCPeerConnection is closed"))
 				.ThrowAsJavaScriptException();
 			return env.Undefined();
@@ -378,7 +381,7 @@ namespace node_webrtc {
 			return env.Undefined();
 		}
 
-		if (!_jinglePeerConnection->RemoveTrack(rtcSender)) {
+		if (!_factory || !_jinglePeerConnection->RemoveTrack(rtcSender)) {
 			Napi::Error(env, ErrorFactory::CreateInvalidAccessError(env, "Cannot removeTrack"))
 				.ThrowAsJavaScriptException();
 			return env.Undefined();
