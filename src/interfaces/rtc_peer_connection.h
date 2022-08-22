@@ -77,13 +77,13 @@ namespace node_webrtc {
 		rtc::scoped_refptr<webrtc::RtpSenderInterface> getUnderlying(RTCRtpSender* sender);
 		rtc::scoped_refptr<webrtc::RtpReceiverInterface> getUnderlying(RTCRtpReceiver* receiver);
 		rtc::scoped_refptr<webrtc::RtpTransceiverInterface> getUnderlying(RTCRtpTransceiver* transceiver);
-
-	private:
-		void processStateChangesPlanB();
-		void processStateChangesUnifiedPlan();
 		inline bool isClosed() {
 			return !_factory || !_jinglePeerConnection;
 		}
+		
+	private:
+		void processStateChangesPlanB();
+		void processStateChangesUnifiedPlan();
 		
 		inline bool isPlanB() { 
 			return _jinglePeerConnection 
