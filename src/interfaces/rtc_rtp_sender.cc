@@ -82,7 +82,14 @@ namespace node_webrtc {
 		CREATE_DEFERRED(info.Env(), deffered)
 		CONVERT_ARGS_OR_REJECT_AND_RETURN_NAPI(deferred, info, parameters, webrtc::RtpParameters)
 
-		auto error = pc->getUnderlying(this)->SetParameters(parameters);
+		auto rtcSender = pc->getUnderlying(this);
+
+		if (!rtcSender) {
+			Reject(deferred, ErrorFactory::CreateInvalidStateError(info.Env(), "Failed to set parameters"));
+			return deferred.Promise();
+		}
+
+		auto error = rtcSender->SetParameters(parameters);
 		if (error.ok()) {
 			deferred.Resolve(info.Env().Undefined());
 		} else {
