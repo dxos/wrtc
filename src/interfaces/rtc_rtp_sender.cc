@@ -110,7 +110,7 @@ namespace node_webrtc {
 
 		auto track = mediaStreamTrack ? mediaStreamTrack->track().get() : nullptr;
 		if (track) {
-			auto expectedMediaType = track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind
+			std::string expectedMediaType = track->kind() == webrtc::MediaStreamTrackInterface::kAudioKind
 				? "audio"
 				: "video";
 			if (this->kind != expectedMediaType) {
@@ -120,11 +120,21 @@ namespace node_webrtc {
 		}
 
 		if (pc->isClosed()) {
-			Reject(deferred, Napi::TypeError::New(info.Env(), "The related RTCPeerConnection has been closed.").Value().As<Napi::Value>());
+			Reject(deferred, ErrorFactory::CreateInvalidStateError(info.Env(), "The related RTCPeerConnection has been closed."));
 			return deferred.Promise();
 		}
-		
-		auto result = pc->getUnderlying(this)->SetTrack(track);
+
+		auto rtcSender = pc->getUnderlying(this);
+
+		// Likely because the sender has already been removed from the peerconnection.
+		if (!rtcSender) {
+			Reject(deferred, ErrorFactory::CreateInvalidStateError(info.Env(), "Failed to replaceTrack"));
+			return deferred.Promise();
+		}
+
+		assert(rtcSender);
+
+		auto result = rtcSender->SetTrack(track);
 
 		if (result) {
 			Resolve(deferred, info.Env().Undefined());

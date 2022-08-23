@@ -27,6 +27,7 @@ const validReasons = new Set([
   'timeout',
   'flaky',
   'mutates-globals',
+  'timeout-success',
   'needs-node10',
   'needs-node11'
 ]);
@@ -87,7 +88,7 @@ function defineSuite() {
               const expectFail = (reason === 'fail') ||
                                 (reason === 'needs-node10' && !hasNode10) ||
                                 (reason === 'needs-node11' && !hasNode11);
-
+              const allowTimeoutSuccess = (reason === 'timeout-success');
               let title = `${testFile}`;
               if (expectFail)
                 title = `[expected fail] ${title}`;
@@ -110,7 +111,10 @@ function defineSuite() {
 
               runTest(title, async () => {
                 await startServer();
-                await runSingleWPT(wptServerURL, testFilePath, expectFail);
+                await runSingleWPT(
+                  wptServerURL, testFilePath, expectFail,
+                  allowTimeoutSuccess
+                );
               });
             }
           }
