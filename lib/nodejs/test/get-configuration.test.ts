@@ -51,7 +51,7 @@ describe('RTCPeerConnection', () => {
   
     Object.keys(spec).forEach((key) => {
       let value = spec[key];
-      it.only(`after setting ${key}`, () => {
+      it(`after setting ${key}`, () => {
         var expectedConfiguration = Object.assign({}, defaultConfiguration);
         expectedConfiguration[key] = value;
         var pc = new RTCPeerConnection(<any>expectedConfiguration);
