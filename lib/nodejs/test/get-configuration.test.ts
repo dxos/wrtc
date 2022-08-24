@@ -77,15 +77,23 @@ describe('RTCPeerConnection', () => {
       var pc = new RTCPeerConnection();
       var expectedConfiguration = Object.assign({}, pc.getConfiguration());
       expectedConfiguration.iceServers = [
-        { urls: ['stun:stun1.example.net'], credential: 'password' }
+        { 
+          urls: ['stun:stun1.example.net'], 
+          credential: 'password',
+          "credentialType": "password" 
+        }
       ];
       pc.setConfiguration(expectedConfiguration);
       var actualConfiguration = pc.getConfiguration();
-      expect(actualConfiguration).to.eql(expectedConfiguration);
+      try {
+        expect(actualConfiguration).to.eql(expectedConfiguration);
+      } catch (e) {
+        throw new Error(`Expected ${JSON.stringify(actualConfiguration, undefined, 2)} to equal ${JSON.stringify(expectedConfiguration, undefined, 2)}`);
+      }
       pc.close();
     });
   
-    it('changing iceServers', () => {
+    it('changing iceTransportPolicy', () => {
       var pc = new RTCPeerConnection();
       var expectedConfiguration = Object.assign({}, pc.getConfiguration());
       expectedConfiguration.iceTransportPolicy = 'relay';
