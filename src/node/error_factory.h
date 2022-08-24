@@ -20,13 +20,13 @@ class ErrorFactory {
     kInvalidModificationError,
     kInvalidStateError,
     kNetworkError,
-    kOperationError
+    kOperationError,
+    kSyntaxError
   };
 
   enum ErrorName {
     kError,
-    kRangeError,
-    kSyntaxError
+    kRangeError
   };
 
   static void Init(Napi::Env, Napi::Object);

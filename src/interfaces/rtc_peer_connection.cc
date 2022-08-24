@@ -77,7 +77,12 @@ namespace node_webrtc {
 
 		CONVERT_ARGS_OR_THROW_AND_RETURN_VOID_NAPI(info, maybeConfiguration, Maybe<ExtendedRTCConfiguration>)
 
-			auto configuration = maybeConfiguration.FromMaybe(ExtendedRTCConfiguration());
+		auto configuration = maybeConfiguration.FromMaybe(ExtendedRTCConfiguration());
+
+		if (!validateConfiguration(configuration.configuration)) {
+			Napi::TypeError::New(info.Env(), "The given configuration is invalid.").ThrowAsJavaScriptException();
+			return;
+		}
 
 		// TODO(mroberts): Read `factory` (non-standard) from RTCConfiguration?
 		_factory = PeerConnectionFactory::GetOrCreateDefault();
@@ -91,12 +96,24 @@ namespace node_webrtc {
 			_port_range.min.FromMaybe(0),
 			_port_range.max.FromMaybe(65535));
 
-		_jinglePeerConnection = _factory->factory()->CreatePeerConnection(
-			configuration.configuration,
-			std::move(portAllocator),
-			nullptr,
-			this);
+		webrtc::PeerConnectionDependencies deps(this);
+		deps.allocator = std::move(portAllocator);
+		deps.cert_generator = nullptr;
 
+		auto result = _factory->factory()->CreatePeerConnectionOrError(
+			configuration.configuration,
+			std::move(deps));
+		
+		if (!result.ok()) {
+			CONVERT_OR_THROW_AND_RETURN_VOID_NAPI(env, &result.error(), error, Napi::Value)
+				Napi::Error(env, error).ThrowAsJavaScriptException();
+			return;
+		}
+
+		_jinglePeerConnection = result.MoveValue();
+		_cached_configuration = ExtendedRTCConfiguration(
+			_jinglePeerConnection->GetConfiguration(),
+			_port_range);
 		// Now that we have an underlying PeerConnection allocated, this object must stay alive until its status becomes 
 		// "closed"
 		// https://w3c.github.io/webrtc-pc/#garbage-collection
@@ -561,20 +578,39 @@ namespace node_webrtc {
 			return result;
 	}
 
+	bool RTCPeerConnection::validateConfiguration(webrtc::PeerConnectionInterface::RTCConfiguration configuration) {
+		for (auto server : configuration.servers) {
+			if (server.uri == std::string("undefined") && server.urls.size() == 0)
+				return false;
+			for (auto url : server.urls) {
+				if (url == std::string("undefined") || url == std::string(""))
+					return false;
+			}
+		}
+
+		return true;
+	}
+
 	Napi::Value RTCPeerConnection::SetConfiguration(const Napi::CallbackInfo& info) {
 		auto env = info.Env();
 
 		CONVERT_ARGS_OR_THROW_AND_RETURN_NAPI(info, configuration, webrtc::PeerConnectionInterface::RTCConfiguration)
 
-			if (!_jinglePeerConnection) {
-				Napi::Error(env, ErrorFactory::CreateInvalidStateError(env, "RTCPeerConnection is closed")).ThrowAsJavaScriptException();
-				return env.Undefined();
-			}
+		if (!validateConfiguration(configuration)) {
+			Napi::TypeError::New(info.Env(), "The given configuration is invalid.").ThrowAsJavaScriptException();
+			return env.Undefined();
+		}
+
+		if (!_jinglePeerConnection) {
+			Napi::Error(env, ErrorFactory::CreateInvalidStateError(env, "RTCPeerConnection is closed")).ThrowAsJavaScriptException();
+			return env.Undefined();
+		}
 
 		auto rtcError = _jinglePeerConnection->SetConfiguration(configuration);
 		if (!rtcError.ok()) {
 			CONVERT_OR_THROW_AND_RETURN_NAPI(env, &rtcError, error, Napi::Value)
-				Napi::Error(env, error).ThrowAsJavaScriptException();
+			Napi::Error(env, ErrorFactory::CreateSyntaxError(env, "Syntax error")).ThrowAsJavaScriptException();
+			//Napi::Error(env, error).ThrowAsJavaScriptException();
 			return env.Undefined();
 		}
 

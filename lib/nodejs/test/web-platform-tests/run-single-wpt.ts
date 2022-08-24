@@ -44,7 +44,7 @@ interface Result {
   stack: string;
 }
 
-export async function runSingleWPT(urlPrefix, testPath, expectFail) {
+export async function runSingleWPT(urlPrefix, testPath, expectFail, allowTimeoutSuccess = false) {
   const unhandledExceptions = [];
   let allowUnhandledExceptions = false;
 
@@ -130,7 +130,7 @@ export async function runSingleWPT(urlPrefix, testPath, expectFail) {
             name: `Boilerplate`,
             message: `Test harness should not timeout`,
             stack: ``,
-            status: 2
+            status: allowTimeoutSuccess ? 0 : 2
           });
         } else {
           console.log(`    (***) Test harness completed`);

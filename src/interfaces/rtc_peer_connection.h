@@ -84,6 +84,7 @@ namespace node_webrtc {
 	private:
 		void processStateChangesPlanB();
 		void processStateChangesUnifiedPlan();
+		bool validateConfiguration(webrtc::PeerConnectionInterface::RTCConfiguration configuration);
 		
 		inline bool isPlanB() { 
 			return _jinglePeerConnection 
