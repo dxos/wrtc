@@ -50,13 +50,17 @@ describe('RTCPeerConnection', () => {
   
     Object.keys(spec).forEach((key) => {
       let value = spec[key];
-      it(`after setting ${key}`, () => {
+      it.only(`after setting ${key}`, () => {
         var expectedConfiguration = Object.assign({}, defaultConfiguration);
         expectedConfiguration[key] = value;
         var pc = new RTCPeerConnection(<any>expectedConfiguration);
         pc.close();
         var actualConfiguration = pc.getConfiguration();
-        expect(actualConfiguration).to.eql(expectedConfiguration);
+        try {
+          expect(actualConfiguration).to.eql(expectedConfiguration);
+        } catch (e) {
+          throw new Error(`Expected ${JSON.stringify(actualConfiguration, undefined, 2)} to equal ${JSON.stringify(expectedConfiguration, undefined, 2)}`);
+        }
       });
     });
   });
@@ -86,7 +90,11 @@ describe('RTCPeerConnection', () => {
       expectedConfiguration.iceTransportPolicy = 'relay';
       pc.setConfiguration(expectedConfiguration);
       var actualConfiguration = pc.getConfiguration();
-      expect(actualConfiguration).to.eql(expectedConfiguration);
+      try {
+        expect(actualConfiguration).to.eql(expectedConfiguration);
+      } catch (e) {
+        throw new Error(`Expected ${JSON.stringify(actualConfiguration, undefined, 2)} to equal ${JSON.stringify(expectedConfiguration, undefined, 2)}`);
+      }
       pc.close();
     });
   
