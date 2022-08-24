@@ -99,6 +99,8 @@
     "test": "npm run build && node --expose-gc --enable-source-maps dist/nodejs/test/test.js",
     "test:cpp": "npm run build && node --expose-gc --enable-source-maps dist/nodejs/test/cpp-test.js",
     "test:gdb": "npm run build && cd build/external/libwebrtc/build/Debug && gdb --args node ../../../../../dist/nodejs/test/test.js",
+    "test:gdb:verbose": "npm run build && cd build/external/libwebrtc/build/Debug && gdb --args node ../../../../../dist/nodejs/test/test.js --verbose",
+    "test:vgdb": "npm run build && cd build/external/libwebrtc/build/Debug && vgdb --args node ../../../../../dist/nodejs/test/test.js",
     "test:verbose": "npm run build && node --expose-gc --enable-source-maps --trace-exit dist/nodejs/test/test.js --verbose",
     "test:debug": "npm run build && node --expose-gc --enable-source-maps --trace-exit --inspect-brk dist/nodejs/test/test.js --verbose",
     "test:debug:native": "npm run build && node --expose-gc --enable-source-maps --trace-exit dist/nodejs/test/test.js --verbose --native-debug",
