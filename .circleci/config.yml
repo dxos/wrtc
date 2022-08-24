@@ -120,6 +120,11 @@ jobs:
             - run:
                 name: Aliasing python to python3 for gn sake
                 command: cp /c/tools/miniconda3/python.exe /c/tools/miniconda3/python3.exe
+            - run:
+                name: Install Windows 10 SDK version 2004 (10.0.19041.0)
+                command: |
+                  curl https://go.microsoft.com/fwlink/?linkid=2120843 -L -o sdk.exe
+                  sdk.exe /quiet
 
       ###
       # LINUX SPECIFIC SETUP
