@@ -124,8 +124,10 @@ jobs:
                 name: Install Windows 10 SDK version 2004 (10.0.19041.0)
                 command: |
                   curl 'https://go.microsoft.com/fwlink/?linkid=2120843' -L -o winsdksetup.exe
+                  echo Extracting SDK...
                   ./winsdksetup.exe /layout Win10SDK /quiet
                   cd Win10SDK
+                  echo Installing SDK...
                   ./winsdksetup.exe /features + /quiet /norestart
 
       ###
