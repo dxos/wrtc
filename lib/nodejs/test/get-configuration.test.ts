@@ -32,7 +32,8 @@ describe('RTCPeerConnection', () => {
     let spec = {
       iceServers: [
         {
-          urls: 'stun:stun1.example.net'
+          urls: ['stun:stun1.example.net'],
+          credentialType: 'password'
         },
         {
           urls: ['turns:turn.example.org', 'turn:turn.example.net'],
@@ -76,7 +77,7 @@ describe('RTCPeerConnection', () => {
       var pc = new RTCPeerConnection();
       var expectedConfiguration = Object.assign({}, pc.getConfiguration());
       expectedConfiguration.iceServers = [
-        { urls: 'stun:stun1.example.net' }
+        { urls: ['stun:stun1.example.net'], credential: 'password' }
       ];
       pc.setConfiguration(expectedConfiguration);
       var actualConfiguration = pc.getConfiguration();
