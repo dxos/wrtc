@@ -11,7 +11,7 @@ const rootPackageJson = require('../package.json');
 
 temp.track();
 
-const githubUrl = 'https://github.com/node-webrtc/node-webrtc/blob/v' + rootPackageJson.version;
+const githubUrl = 'https://github.com/astronautlabs/webrtc/blob/v' + rootPackageJson.version;
 
 const paths = [
   'lib',

@@ -8,8 +8,8 @@
 
 # Forked to @astronautlabs/webrtc
 
-The previous changelog entries correspond to releases of the `wrtc` package from which `@astronautlabs/webrtc` was 
-forked.
+The previous changelog entries correspond to releases of the [`wrtc`](https://github.com/node-webrtc/node-webrtc) 
+package from which `@astronautlabs/webrtc` was forked.
 
 # 0.4.6
 

@@ -1,7 +1,7 @@
 # @/webrtc
 
 > 🚧 **Work In Progress**  
-> This library is not yet ready for use and is unreleased
+> This library is in an alpha state. It is not yet ready for production use.
 
 > 📺 Part of the [**Astronaut Labs Broadcast Suite**](https://github.com/astronautlabs/broadcast)
 
@@ -118,7 +118,7 @@ Other libwebrtc bindings use Google's in-tree `libc++` when targetting Linux. Du
 
 # Examples
 
-See [node-webrtc/node-webrtc-examples](https://github.com/node-webrtc/node-webrtc-examples).
+See [astronautlabs/webrtc-examples](https://github.com/astronautlabs/webrtc-examples).
 
 # Development
 
