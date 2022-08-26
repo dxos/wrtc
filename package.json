@@ -1,6 +1,5 @@
 {
   "name": "@astronautlabs/webrtc",
-  "private": true,
   "description": "Standards-compliant WebRTC implementation for Node",
   "keywords": [
     "webrtc",

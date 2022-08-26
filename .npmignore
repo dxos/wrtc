@@ -10,7 +10,6 @@ dist/test.js
 docs/
 karma/
 node/
-npm/
 out/
 private/
 web-platform-tests/
