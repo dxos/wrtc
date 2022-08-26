@@ -6,6 +6,9 @@
     "p2p",
     "peer"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "0.5.0",
   "author": "Alan K <ack@modeswitch.org> (http://blog.modeswitch.org)",
   "homepage": "https://github.com/node-webrtc/node-webrtc",
