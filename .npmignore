@@ -13,3 +13,4 @@ node/
 out/
 private/
 web-platform-tests/
+.env
