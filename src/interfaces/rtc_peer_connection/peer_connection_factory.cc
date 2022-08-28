@@ -54,7 +54,7 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   std::unique_ptr<rtc::Thread> signalThread = rtc::Thread::Create();
   assert(signalThread);
 
-  result = signalThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
+  result = signalThread->SetName("pcf:signaling", nullptr);
   assert(result);
 
   result = signalThread->Start();
@@ -68,7 +68,7 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   _workerThread = rtc::Thread::CreateWithSocketServer();
   assert(_workerThread);
 
-  result = _workerThread->SetName("PeerConnectionFactory:workerThread", nullptr);
+  result = _workerThread->SetName("pcf:worker", nullptr);
   assert(result);
 
   result = _workerThread->Start();
