@@ -10,3 +10,4 @@ third_party
 dist/
 .vs/
 private/
+.env
