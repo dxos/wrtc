@@ -17,6 +17,7 @@ import { ConsoleReporter, describe, it, suite, TestFunction } from 'razmin';
 const ONLY = [
   //`RTCPeerConnection-addTrack.https.html`
   //`RTCConfiguration-iceServers.html`
+  //`RTCDataChannel-id.html`                  // flakey abort on linux due to weakptr destructor sequencing
 ];
 
 // The WPT suite routinely ignores promise rejections.

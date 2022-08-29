@@ -1,13 +1,13 @@
 # @/webrtc
 
 > 🚧 **Work In Progress**  
-> This library is not yet ready for use and is unreleased
+> This library is in an alpha state. It is not yet ready for production use.
 
 > 📺 Part of the [**Astronaut Labs Broadcast Suite**](https://github.com/astronautlabs/broadcast)
 
-[![NPM](https://img.shields.io/npm/v/@astronautlabs/webrtc.svg)](https://www.npmjs.com/package/@astronautlabs/webrtc) [![Build Status](https://circleci.com/gh/astronautlabs/webrtc/tree/develop.svg?style=shield)](https://circleci.com/gh/astronautlabs/webrtc)
+[![NPM](https://img.shields.io/npm/v/@astronautlabs/webrtc.svg)](https://www.npmjs.com/package/@astronautlabs/webrtc) [![Build Status](https://circleci.com/gh/astronautlabs/webrtc/tree/main.svg?style=shield)](https://circleci.com/gh/astronautlabs/webrtc)
 
-Node.js bindings for `libwebrtc`, which implements [WebRTC M94](https://groups.google.com/g/discuss-webrtc/c/tFyWdqW2sQM/m/ebfZvC9VAgAJ). This project aims for spec-compliance and is tested using the W3C's [web-platform-tests](https://github.com/web-platform-tests/wpt) project. A number of [nonstandard APIs](docs/nonstandard-apis.md) for testing are also included.
+Node.js bindings for `libwebrtc`, which implements [WebRTC M95](https://groups.google.com/g/discuss-webrtc/c/SfzpFc-dH-E/m/JHlMpLO1AAAJ). This project aims for spec-compliance and is tested using the W3C's [web-platform-tests](https://github.com/web-platform-tests/wpt) project. A number of [nonstandard APIs](docs/nonstandard-apis.md) for testing are also included.
 
 # Install
 
@@ -118,7 +118,7 @@ Other libwebrtc bindings use Google's in-tree `libc++` when targetting Linux. Du
 
 # Examples
 
-See [node-webrtc/node-webrtc-examples](https://github.com/node-webrtc/node-webrtc-examples).
+See [astronautlabs/webrtc-examples](https://github.com/astronautlabs/webrtc-examples).
 
 # Development
 

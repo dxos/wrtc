@@ -1,4 +1,6 @@
-/* Copyright (c) 2019 The node-webrtc project authors. All rights reserved.
+/**
+ * Copyright (c) 2022 Astronaut Labs, LLC. All rights reserved.
+ * Copyright (c) 2019 The node-webrtc project authors. All rights reserved.
  *
  * Use of this source code is governed by a BSD-style license that can be found
  * in the LICENSE.md file in the root of the source tree. All contributing
@@ -52,7 +54,7 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   std::unique_ptr<rtc::Thread> signalThread = rtc::Thread::Create();
   assert(signalThread);
 
-  result = signalThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
+  result = signalThread->SetName("pcf:signaling", nullptr);
   assert(result);
 
   result = signalThread->Start();
@@ -66,7 +68,7 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   _workerThread = rtc::Thread::CreateWithSocketServer();
   assert(_workerThread);
 
-  result = _workerThread->SetName("PeerConnectionFactory:workerThread", nullptr);
+  result = _workerThread->SetName("pcf:worker", nullptr);
   assert(result);
 
   result = _workerThread->Start();

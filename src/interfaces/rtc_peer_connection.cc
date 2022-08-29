@@ -1,4 +1,6 @@
-/* Copyright (c) 2019 The node-webrtc project authors. All rights reserved.
+/**
+ * Copyright (c) 2022 Astronaut Labs, LLC. All rights reserved.
+ * Copyright (c) 2019 The node-webrtc project authors. All rights reserved.
  *
  * Use of this source code is governed by a BSD-style license that can be found
  * in the LICENSE.md file in the root of the source tree. All contributing
@@ -155,7 +157,8 @@ namespace node_webrtc {
 
 		std::string sdp;
 		if (!ice_candidate->ToString(&sdp)) {
-			error = "Failed to print the candidate string. This is pretty weird. File a bug on https://github.com/node-webrtc/node-webrtc";
+			error = "Failed to print the candidate string. This is pretty weird. "
+					"File a bug on https://github.com/astronautlabs/webrtc";
 			return;
 		}
 
