@@ -188,6 +188,9 @@ jobs:
           key: modules-cache-v1-{{ arch }}-{{ checksum "CACHE_KEY" }}-{{ checksum "package.json" }}
           paths:
             - node_modules
+      - run:
+          name: Build libwebrtc + Node.js bindings
+          command: npm run build:native
       - save_cache:
           key: asset-cache-v1-{{ arch }}-{{ checksum "CACHE_KEY" }}-{{ checksum "CMakeLists.txt" }}
           paths:
