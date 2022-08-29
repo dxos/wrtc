@@ -172,7 +172,7 @@ jobs:
             export TAR_OPTIONS=--no-same-owner # This fixes up some odd behavior when untar-ing as root.
             export SKIP_DOWNLOAD=true # Do not use prebuilt binaries
             export PATH="$PATH:/c/Program Files/CMake/bin:/c/Program Files/Git/usr/bin:/c/Program Files/Git/mingw64/libexec/git-core" # Needed for Windows
-
+            export PATH="$PATH:/c/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64"
             npm install
 
             # TODO
