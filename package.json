@@ -1,5 +1,5 @@
 {
-  "name": "@astronautlabs/webrtc",
+  "name": "@cubicleai/wrtc",
   "description": "Standards-compliant WebRTC implementation for Node",
   "keywords": [
     "webrtc",
@@ -11,17 +11,27 @@
   },
   "version": "0.5.2",
   "author": "Alan K <ack@modeswitch.org> (http://blog.modeswitch.org)",
-  "homepage": "https://github.com/astronautlabs/webrtc",
-  "bugs": "https://github.com/astronautlabs/webrtc/issues",
+  "contributors": [
+    {
+      "name": "Astronaut Labs",
+      "url": "https://astronautlabs.com/"
+    },
+    {
+      "name": "Cubicle, Inc.",
+      "url": "https://cubicle.ai"
+    }
+  ],
+  "homepage": "https://github.com/cubicleai/wrtc",
+  "bugs": "https://github.com/cubicleai/wrtc/issues",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/astronautlabs/webrtc.git"
+    "url": "https://github.com/cubicleai/wrtc.git"
   },
   "main": "dist/nodejs/index.js",
   "browser": "dist/browser/index.js",
   "twine": {
-    "distributionUrl": "https://webrtc.astrocdn.com",
+    "distributionUrl": "https://wrtc.s3.amazonaws.com",
     "moduleName": "wrtc"
   },
   "engines": {
