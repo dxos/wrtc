@@ -72,7 +72,7 @@ export async function runSingleWPT(urlPrefix, testPath, expectFail, allowTimeout
   });
   const { window } = dom;
 
-  // NOTE(mroberts): Here is where we inject @/webrtc.
+  // NOTE(mroberts): Here is where we inject @cubicleai/wrtc.
   Object.assign(window, wrtc);
   window.TypeError = TypeError;
 

@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-`@/webrtc` uses [node-cmake](https://github.com/cjntaylor/node-cmake) to build
+`@cubicleai/wrtc` uses [node-cmake](https://github.com/cjntaylor/node-cmake) to build
 from source. When building from source, in addition to the prerequisites
 required by node-cmake, you will need
 
@@ -23,7 +23,7 @@ variable to "arm" or "arm64" to build for armv7l or arm64, respectively. Linux
 and macOS users can also set the `DEBUG` environment variable for debug builds.
 
 ```
-git clone https://github.com/astronautlabs/webrtc.git
+git clone https://github.com/cubicleai/webrtc.git
 cd webrtc
 SKIP_DOWNLOAD=true npm install
 ```
@@ -39,7 +39,7 @@ Subsequent builds can be triggered with `ncmake`:
 ./node_modules/.bin/ncmake build
 ```
 
-You can pass either `--debug` or `--release` to build a debug or release build of `@/webrtc` (and the underlying WebRTC 
+You can pass either `--debug` or `--release` to build a debug or release build of `@cubicleai/wrtc` (and the underlying WebRTC 
 library). Refer to [node-cmake](https://github.com/cjntaylor/node-cmake) for additional command-line options to 
 `ncmake`.
 
@@ -48,7 +48,7 @@ library). Refer to [node-cmake](https://github.com/cjntaylor/node-cmake) for add
 ### Linux
 
 On Linux, we use the system provided version of `libstdc++`. You must have the appropriate headers installed. Also, 
-although we compile WebRTC sources with Clang (downloaded as part of WebRTC's build process), we compile `@/webrtc`
+although we compile WebRTC sources with Clang (downloaded as part of WebRTC's build process), we compile `@cubicleai/wrtc`
 sources with GCC 5.4 or newer.
 
 #### armv7l
@@ -83,7 +83,7 @@ SKIP_DOWNLOAD=true TARGET_ARCH=arm64 ARM_TOOLS_PATH=$(pwd)/gcc-linaro-7.3.1-2018
 
 On macOS, we statically link libc++ and libc++abi. Also, we compile WebRTC
 sources with the version of Clang downloaded as part of WebRTC's build process,
-but we compile `@/webrtc` sources using the system Clang.
+but we compile `@cubicleai/wrtc` sources using the system Clang.
 
 ### Windows
 
@@ -112,7 +112,7 @@ npm test
 
 ## Web Platform Tests
 
-[web-platform-tests/wpt](https://github.com/web-platform-tests/wpt) defines a suite of WebRTC tests. `@/webrtc`borrows 
+[web-platform-tests/wpt](https://github.com/web-platform-tests/wpt) defines a suite of WebRTC tests. `@cubicleai/wrtc`borrows 
 a technique from [jsdom/jsdom](https://github.com/jsdom/jsdom) to run these tests in Node.js. 
 
 Run the tests with:
@@ -122,7 +122,7 @@ npm run wpt:test
 
 ## Browser Tests
 
-These tests are run by CircleCI to ensure `@/webrtc` remains compatible with the latest versions of Chrome and 
+These tests are run by CircleCI to ensure `@cubicleai/wrtc` remains compatible with the latest versions of Chrome and 
 Firefox.
 
 ```

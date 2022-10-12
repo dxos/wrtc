@@ -56,7 +56,7 @@ TO_NAPI_IMPL(webrtc::IceCandidateInterface*, pair) {
   if (!value->ToString(&candidate_string)) {
     return Validation<Napi::Value>::Invalid(
       "Failed to print the candidate string. This is pretty weird. " 
-      "File a bug on https://github.com/astronautlabs/webrtc"
+      "File a bug on https://github.com/cubicleai/wrtc"
     );
   }
 

@@ -25,7 +25,7 @@ function ManagedHandler() {
       try {
         return handler.apply(this, [ event, ...args ]);
       } catch (e) {
-        console.error(`(@/webrtc) INTERNAL: Caught error in managed handler ${handler.name}: ${e.message}`);
+        console.error(`(@cubicleai/wrtc) INTERNAL: Caught error in managed handler ${handler.name}: ${e.message}`);
         console.error(e);
       }
     }

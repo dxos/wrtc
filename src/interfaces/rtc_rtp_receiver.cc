@@ -105,7 +105,7 @@ namespace node_webrtc {
 
 	Napi::Value RTCRtpReceiver::GetStats(const Napi::CallbackInfo& info) {
 		CREATE_DEFERRED(info.Env(), deferred)
-			Reject(deferred, Napi::Error::New(info.Env(), "Not yet implemented; file a feature request against @astronautlabs/webrtc"));
+			Reject(deferred, Napi::Error::New(info.Env(), "Not yet implemented; file a feature request against @cubicleai/wrtc"));
 		return deferred.Promise();
 	}
 

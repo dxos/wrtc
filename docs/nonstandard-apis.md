@@ -4,7 +4,7 @@ Nonstandard APIs
 MediaStream
 -----------
 
-MediaStreams in `@/webrtc` can be constructed with arbitrary IDs. For example,
+MediaStreams in `@cubicleai/wrtc` can be constructed with arbitrary IDs. For example,
 the following MediaStream, `stream`, has its ID set to "foo".
 
 ```js
@@ -22,7 +22,7 @@ constrains the port range used by the RTCPeerConnection's ICE transports. For
 example,
 
 ```js
-const { RTCPeerConnection } = require('wrtc');
+const { RTCPeerConnection } = require('@cubicleai/wrtc');
 
 const pc = new RTCPeerConnection({
   portRange: {
@@ -41,7 +41,7 @@ of the `SDP_SEMANTICS` environment variable. If `SDP_SEMANTICS` is unset, the
 default is "unified-plan".
 
 ```js
-const { RTCPeerConnection } = require('wrtc');
+const { RTCPeerConnection } = require('@cubicleai/wrtc');
 
 const pc = new RTCPeerConnection({
   sdpSemantics: 'plan-b'  // default is "unified-plan"
@@ -55,7 +55,7 @@ SDP_SEMANTICS=plan-b node app.js
 Programmatic Audio
 ------------------
 
-`@/webrtc` includes nonstandard, programmatic audio APIs in the form of
+`@cubicleai/wrtc` includes nonstandard, programmatic audio APIs in the form of
 RTCAudioSource and RTCAudioSink. With these APIs, you can
 
  * Pass audio samples to RTCAudioSource via the `onData` method. Then use the
@@ -68,7 +68,7 @@ RTCAudioSource and RTCAudioSink. With these APIs, you can
 For example,
 
 ```js
-const { RTCAudioSource, RTCAudioSink } = require('wrtc').nonstandard;
+const { RTCAudioSource, RTCAudioSink } = require('@cubicleai/wrtc');
 
 const source = new RTCAudioSource();
 const track = source.createTrack();
@@ -143,7 +143,7 @@ interface RTCAudioSink: EventTarget {
 Programmatic Video
 ------------------
 
-`@/webrtc` includes nonstandard, programmatic video APIs in the form of
+`@cubicleai/wrtc` includes nonstandard, programmatic video APIs in the form of
 RTCVideoSource and RTCVideoSink. With these APIs, you can
 
  * Pass [I420](https://wiki.videolan.org/YUV/#I420) frames to RTCVideoSource
@@ -156,7 +156,7 @@ RTCVideoSource and RTCVideoSink. With these APIs, you can
 For example,
 
 ```js
-const { RTCVideoSource, RTCVideoSink } = require('wrtc').nonstandard;
+const { RTCVideoSource, RTCVideoSink } = require('@cubicleai/wrtc');
 
 const source = new RTCVideoSource();
 const track = source.createTrack();
@@ -183,8 +183,8 @@ setTimeout(() => {
 }, 10000);
 ```
 
-`@/webrtc` uses
-[libyuv](https://github.com/astronautlabs/libyuv) for handling conversions to/from I420 frames. These can be useful 
+`@cubicleai/wrtc` uses
+[libyuv](https://github.com/@cubicleai/libyuv) for handling conversions to/from I420 frames. These can be useful 
 when converting to and from RGBA.
 
 ### RTCVideoSource
@@ -244,7 +244,7 @@ I420 and RGBA frames. WebRTC expects I420, whereas APIs like the
 expect RGBA, so these functions are useful for converting between. For example,
 
 ```js
-const { i420ToRgba, rgbaToI420 } = require('wrtc').nonstandard;
+const { i420ToRgba, rgbaToI420 } = require('@cubicleai/wrtc');
 
 const width = 640;
 const height = 480;

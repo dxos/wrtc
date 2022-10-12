@@ -1,18 +1,13 @@
-# @/webrtc
+# @cubicleai/wrtc
 
-> 🚧 **Work In Progress**  
-> This library is in an alpha state. It is not yet ready for production use.
-
-> 📺 Part of the [**Astronaut Labs Broadcast Suite**](https://github.com/astronautlabs/broadcast)
-
-[![NPM](https://img.shields.io/npm/v/@astronautlabs/webrtc.svg)](https://www.npmjs.com/package/@astronautlabs/webrtc) [![Build Status](https://circleci.com/gh/astronautlabs/webrtc/tree/main.svg?style=shield)](https://circleci.com/gh/astronautlabs/webrtc)
+[![NPM](https://img.shields.io/npm/v/@cubicleai/wrtc.svg)](https://www.npmjs.com/package/@cubicleai/wrtc)
 
 Node.js bindings for `libwebrtc`, which implements [WebRTC M95](https://groups.google.com/g/discuss-webrtc/c/SfzpFc-dH-E/m/JHlMpLO1AAAJ). This project aims for spec-compliance and is tested using the W3C's [web-platform-tests](https://github.com/web-platform-tests/wpt) project. A number of [nonstandard APIs](docs/nonstandard-apis.md) for testing are also included.
 
 # Install
 
 ```
-npm install @astronautlabs/webrtc
+npm install @cubicleai/wrtc
 ```
 
 Installing from NPM downloads a prebuilt binary for your operating system × architecture. Set the `TARGET_ARCH` environment variable to "arm" or "arm64" to download for armv7l or arm64, respectively. Linux and macOS users can also set the `DEBUG` environment variable to download debug builds.
@@ -37,7 +32,7 @@ On the following architectures:
 
 Build validation is not yet in place for all of these platforms. 
 
-The following platforms are confirmed to work with `@astronautlabs/webrtc`. Some may have prebuilt binaries available. Since we target [N-API version 3](https://nodejs.org/api/n-api.html), there may be additional platforms supported that are not listed here. If your platform is not supported, you may still be able to [build from source](docs/build-from-source.md).
+The following platforms are confirmed to work with `@cubicleai/wrtc`. Some may have prebuilt binaries available. Since we target [N-API version 3](https://nodejs.org/api/n-api.html), there may be additional platforms supported that are not listed here. If your platform is not supported, you may still be able to [build from source](docs/build-from-source.md).
 
 The table below maps our support intentions to which configurations have been validated.
 <table>
@@ -114,11 +109,11 @@ The table below maps our support intentions to which configurations have been va
 
 ### Linux
 
-Other libwebrtc bindings use Google's in-tree `libc++` when targetting Linux. Due to compatibility issues, and to reduce the need for multiple C++ standard libraries to be loaded within a single application when using `@/webrtc` in concert with other native add-ons, we have opted to use the system's `libstdc++` instead. This does mean that you will need a compatible version of `libstdc++` installed when you use the prebuilt versions of the library. If the prebuilt versions give you runtime link errors related to missing versions of `libstdc++`, either install the correct version or use `SKIP_DOWNLOAD=true` when running `npm install` to build from source instead.
+Other libwebrtc bindings use Google's in-tree `libc++` when targetting Linux. Due to compatibility issues, and to reduce the need for multiple C++ standard libraries to be loaded within a single application when using `@cubicleai/wrtc` in concert with other native add-ons, we have opted to use the system's `libstdc++` instead. This does mean that you will need a compatible version of `libstdc++` installed when you use the prebuilt versions of the library. If the prebuilt versions give you runtime link errors related to missing versions of `libstdc++`, either install the correct version or use `SKIP_DOWNLOAD=true` when running `npm install` to build from source instead.
 
 # Examples
 
-See [astronautlabs/webrtc-examples](https://github.com/astronautlabs/webrtc-examples).
+See [cubicleai/webrtc-examples](https://github.com/cubicleai/webrtc-examples).
 
 # Development
 

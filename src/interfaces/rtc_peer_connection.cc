@@ -158,7 +158,7 @@ namespace node_webrtc {
 		std::string sdp;
 		if (!ice_candidate->ToString(&sdp)) {
 			error = "Failed to print the candidate string. This is pretty weird. "
-					"File a bug on https://github.com/astronautlabs/webrtc";
+					"File a bug on https://github.com/cubicleai/wrtc";
 			return;
 		}
 

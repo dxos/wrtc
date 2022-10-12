@@ -2,7 +2,7 @@ import 'segfault-handler';
 import { describe, suite } from "razmin";
 
 console.log(`****************`);
-console.log(`@/webrtc Test Suite`);
+console.log(`@cubicleai/wrtc Test Suite`);
 console.log(`PID: ${process.pid}`);
 
 let waitTime = 0;
