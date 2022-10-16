@@ -1,3 +1,12 @@
+# 0.6.0
+
+- Updated to WebRTC M95.
+- Added support for Apple silicon.
+- Builds with H.264 enabled.
+- Use `wrtc.s3.amazonaws.com` as the distribution URL.
+
+# Forked to @cubicleai/wrtc
+
 # vNext (0.5.0)
 
 - Move Javascript sources to Typescript
