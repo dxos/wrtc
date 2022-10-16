@@ -141,6 +141,7 @@ list(APPEND GN_GEN_ARGS
   use_custom_libcxx_for_host=false
   rtc_include_pulse_audio=false
   rtc_include_tests=false
+  rtc_use_h264=true
 )
 if ("$ENV{TARGET_ARCH}" STREQUAL "arm")
   list(APPEND GN_GEN_ARGS
