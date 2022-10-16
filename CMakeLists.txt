@@ -15,7 +15,7 @@ ExternalProject_Add(
   project_depot_tools
 
   GIT_REPOSITORY    https://chromium.googlesource.com/chromium/tools/depot_tools.git
-  GIT_TAG           2fddb95698211db1373ebe2b16091a54eac51c9c
+  GIT_TAG           0e2fb336b2e7ddbbb9c5ab70eab25f82f55dff2b
 
   PREFIX            ${CMAKE_BINARY_DIR}/external/depot_tools/prefix
   TMP_DIR           ${CMAKE_BINARY_DIR}/external/depot_tools/tmp
@@ -151,8 +151,12 @@ if ("$ENV{TARGET_ARCH}" STREQUAL "arm")
     fatal_linker_warnings=false
   )
 elseif ("$ENV{TARGET_ARCH}" STREQUAL "arm64")
+  if (NOT APPLE)
   list(APPEND GN_GEN_ARGS
     target_os="linux"
+  )
+  endif()
+  list(APPEND GN_GEN_ARGS
     target_cpu="arm64"
     rtc_build_tools=true
     treat_warnings_as_errors=false
@@ -194,10 +198,12 @@ if (WIN32)
 else()
   set(byproducts
     #${libc++_objects}
-    #${libc++abi_objects}
     ${libwebrtc_binary_dir}/obj/libwebrtc.a
     ${libwebrtc_binary_dir}/obj/pc/libpeerconnection.a
   )
+  if (NOT APPLE)
+    list(APPEND byproducts ${libc++abi_objects})
+  endif()
 endif()
 
 ExternalProject_Add(
@@ -436,6 +442,15 @@ else()
       "-framework AppKit"
       "-framework AVFoundation"
     )
+
+    if ("$ENV{TARGET_ARCH}" STREQUAL "arm64")
+      target_compile_options(${MODULE} PRIVATE
+        -arch arm64
+      )
+      target_link_options(${MODULE} PRIVATE
+        -arch arm64
+      )
+    endif()
 
     target_compile_options(${MODULE} PRIVATE
       -Weverything

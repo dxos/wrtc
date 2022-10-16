@@ -40,7 +40,7 @@ The table below maps our support intentions to which configurations have been va
     <tr>
       <td style="text-align: center;" colspan="2" rowspan="2"></td>
       <th style="text-align: center;" colspan="3">Linux</th>
-      <th style="text-align: center;">macOS</th>
+      <th style="text-align: center;" colspan="2">macOS</th>
       <th style="text-align: center;">Windows</th>
     </tr>
     <tr>
@@ -48,6 +48,7 @@ The table below maps our support intentions to which configurations have been va
       <th style="text-align: center;">arm64</th>
       <th style="text-align: center;">x64</th>
       <th style="text-align: center;">x64</th>
+      <th style="text-align: center;">arm64</th>
       <th style="text-align: center;">x64</th>
     </tr>
   </thead>
@@ -60,6 +61,7 @@ The table below maps our support intentions to which configurations have been va
       <td align="center"></td>
       <td align="center"></td>
       <td align="center">✓</td>
+      <td align="center">✓</td>
     </tr>
     <tr>
       <th>16</th>
@@ -68,6 +70,7 @@ The table below maps our support intentions to which configurations have been va
       <td align="center"></td>
       <td align="center"></td>
       <td align="center">✓</td>
+      <td align="center">✓</td>
     </tr>
     <tr>
       <th>18</th>
@@ -76,10 +79,12 @@ The table below maps our support intentions to which configurations have been va
       <td align="center"></td>
       <td align="center"></td>
       <td align="center">✓</td>
+      <td align="center">✓</td>
     </tr>
     <tr>
       <th rowspan="3">Electron</th>
       <th>18</th>
+      <td align="center"></td>
       <td align="center"></td>
       <td align="center"></td>
       <td align="center"></td>
@@ -93,9 +98,11 @@ The table below maps our support intentions to which configurations have been va
       <td align="center"></td>
       <td align="center"></td>
       <td align="center"></td>
+      <td align="center"></td>
     </tr>
     <tr>
       <th>20</th>
+      <td align="center"></td>
       <td align="center"></td>
       <td align="center"></td>
       <td align="center"></td>

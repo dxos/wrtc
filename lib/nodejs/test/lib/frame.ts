@@ -1,4 +1,4 @@
-import { ABGRToI420, I420ToRGBA, RGBAToI420 } from 'libyuv';
+import { ABGRToI420, I420ToRGBA, RGBAToI420 } from "@cubicleai/yuv";
 
 export class I420Frame {
   constructor(width = 640, height = 480) {
