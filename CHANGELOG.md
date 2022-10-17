@@ -1,3 +1,7 @@
+# 0.6.1
+
+- Reduce size of npm package.
+
 # 0.6.0
 
 - Updated to WebRTC M95.
