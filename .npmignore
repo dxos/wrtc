@@ -4,11 +4,10 @@
 appveyor.yml
 build/
 ci/
-dist/test/**
-dist/**/*.test.js
-dist/test.js
+dist/*/test/
 docs/
 karma/
+lib/
 node/
 out/
 private/
