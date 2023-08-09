@@ -369,9 +369,6 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: [linux-x86_64, windows]
-              node-version: ["16.9.0"]
-              release-type: ["Debug"]
-              #os: [win-x86_64, linux-x86_64, linux-arm64, macos]
-              #node-version: ["14.17.6", "16.9.0"]
-              #release-type: ["Debug", "Release"]
+              os: [win-x86_64, linux-x86_64, linux-arm64, macos]
+              node-version: ["18.12.1"]
+              release-type: ["Debug", "Release"]
