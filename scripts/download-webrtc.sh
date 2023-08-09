@@ -4,6 +4,7 @@ set -e
 
 set -v
 
+export DEPOT_TOOLS_UPDATE=0
 export PATH=$DEPOT_TOOLS:$PATH
 
 gclient config --unmanaged --spec 'solutions=[{"name":"src","url":"https://webrtc.googlesource.com/src.git"}]'

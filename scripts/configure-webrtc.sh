@@ -4,6 +4,7 @@ set -e
 
 set -v
 
+export DEPOT_TOOLS_UPDATE=0
 export PATH=$DEPOT_TOOLS:$PATH
 
 cd ${SOURCE_DIR}
